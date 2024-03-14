@@ -17,8 +17,7 @@ public abstract class Entidad implements EntidadLogica {
 	protected Entidad(int x, int y, String path_img) {
 		pos_x = x;
 		pos_y = y;
-		if(path_img != null)
-			cargar_imagenes_representativas(path_img);
+		cargar_imagenes_representativas(path_img);
 	}
 	
 	@Override

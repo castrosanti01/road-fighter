@@ -3,16 +3,17 @@ package logica;
 import java.util.LinkedList;
 import java.util.List;
 
+import entidades.Carretera;
 import entidades.Entidad;
+import entidades.VehiculoJugador;
 
-public class Carretera extends Entidad{
+public class Cerebro {
 	
 	protected Juego mi_juego;
 	protected List<Entidad> entidades;
 	protected Entidad vehiculo_jugador;
 	
-	public Carretera(Juego j) {
-		super(0, 0, null);
+	public Cerebro(Juego j) {
 		entidades = new LinkedList<Entidad>();
 		mi_juego = j;
 	}
@@ -36,36 +37,30 @@ public class Carretera extends Entidad{
 				break;
 			}
 			case Juego.ZETA: {
-				avanzar_carretera(pos_y + 10);
-				//vehiculo_jugador.cambiar_posicion(vehiculo_jugador.get_pos_x() + 10);
+				avanzar_carretera(1);
 				break;
 			}
 			case Juego.EQUIS: {
-				System.out.println("x");
-				//vehiculo_jugador.cambiar_posicion(vehiculo_jugador.get_pos_x() + 10);
+				avanzar_carretera(2);
 				break;
 			}
 		}
 	}
 	
-	private void avanzar_carretera(int nueva_y) {
-		pos_y = nueva_y;
-		System.out.println(pos_y);
-		entidad_grafica.notificarse_cambio_posicion();
+	private void avanzar_carretera(int cant) {
+		VehiculoJugador aux = (VehiculoJugador) vehiculo_jugador;
+		aux.aumentar_distancia(cant);
+		System.out.println(aux.get_distancia());
+		for(Entidad e: entidades) {
+			e.cambiar_posicion(e.get_pos_y() + (10 * cant));
+		}
 	}
 
-	public void resetear_carretera(int limite_menor, int limite_mayor, String path) {
-		cargar_imagenes_representativas(path);
-		size_label = 500;
-		entidades.add(this);
+	public void agregar_carretera(Carretera carretera) {
+		entidades.add(carretera);
 	}
 
 	public void agregar_jugador(Entidad vehiculoJugador) {
 		vehiculo_jugador = vehiculoJugador;
-		entidades.add(vehiculo_jugador);
 	}
-	
-	
-
-	
 }

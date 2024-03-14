@@ -16,27 +16,32 @@ public class Juego {
 	
 	protected Ventana mi_ventana;
 	protected Nivel mi_nivel;
-	protected Carretera mi_carretera;
+	protected Cerebro cerebro;
 	
 	public Juego() {
-		mi_carretera = new Carretera(this);
 		mi_ventana = new Ventana(this);
-		mi_nivel = GeneradorNivel.cargar_nivel(mi_carretera);
+		cerebro = new Cerebro(this);
+		mi_nivel = GeneradorNivel.cargar_nivel(cerebro);
 		asociar_entidades_logicas_graficas();
 	}
 	
 	private void asociar_entidades_logicas_graficas() {
-		List<Entidad> entidades = mi_carretera.get_entidades();
-	    EntidadGrafica eg;
+		List<Entidad> entidades = cerebro.get_entidades();
+		Entidad jugador = cerebro.get_vehiculo_jugador();
+		EntidadGrafica eg;
 	    
 	    for(Entidad e: entidades) {
 	    	eg = mi_ventana.agregar_entidad(e);
 	        e.set_entidad_grafica(eg);
 	    }
+	    
+	    eg = mi_ventana.agregar_entidad(jugador);
+	    jugador.set_entidad_grafica(eg);
+	    
 	  }
 	
 	public void mover_jugador(int d) {
-	    mi_carretera.mover_jugador(d);
+		cerebro.mover_jugador(d);
 	 }
 
 	public static void main(String[] args) {
