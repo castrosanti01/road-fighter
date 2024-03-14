@@ -3,11 +3,12 @@ package animadores;
 import GUI.Celda;
 
 public class AnimadorMovimiento extends Thread implements Animador {
-
+	
 	protected Celda celda_animada;
 	
 	protected int step;
 	protected int delay;
+	protected int prioridad;
 	
 	protected int pos_x_destino;
 	protected int pos_y_destino;
@@ -18,13 +19,17 @@ public class AnimadorMovimiento extends Thread implements Animador {
 		this.delay = delay;
 				
 		pos_x_destino = celda.get_entidad_logica().get_pos_x();
-		pos_y_destino = celda.get_entidad_logica().get_pos_y();	
+		pos_y_destino = celda.get_entidad_logica().get_pos_y();
 		
 		comenzar_animacion();
 	}
 	
 	public Celda get_celda_asociada() {
 		return celda_animada;
+	}
+	
+	public int get_prioridad() {
+		return prioridad;
 	}
 	
 	public void comenzar_animacion() {
@@ -51,7 +56,7 @@ public class AnimadorMovimiento extends Thread implements Animador {
 			pos_x_actual += paso_en_x * step;
 			pos_y_actual += paso_en_y * step;
 			
-			celda_animada.setBounds(pos_x_actual, pos_y_actual, size_label, 80);
+			celda_animada.setBounds(pos_x_actual, pos_y_actual, size_label, size_label);
 			
 			try {
 				sleep(delay);

@@ -1,12 +1,14 @@
 package entidades;
 
 import GUI.EntidadGrafica;
+import GUI.Ventana;
 import logica.EntidadLogica;
 
 public abstract class Entidad implements EntidadLogica {
 	
 	public int pos_x;
 	public int pos_y;
+	public int size_label = Ventana.size_label;
 	public int velocidad;
 	
 	protected String [] imagenes_representativas;
@@ -15,7 +17,8 @@ public abstract class Entidad implements EntidadLogica {
 	protected Entidad(int x, int y, String path_img) {
 		pos_x = x;
 		pos_y = y;
-		cargar_imagenes_representativas(path_img);
+		if(path_img != null)
+			cargar_imagenes_representativas(path_img);
 	}
 	
 	@Override
@@ -26,6 +29,11 @@ public abstract class Entidad implements EntidadLogica {
 	@Override
 	public int get_pos_y() {
 		return pos_y;
+	}
+	
+	@Override
+	public int get_size_label() {
+		return size_label;
 	}
 	
 	public void set_entidad_grafica(EntidadGrafica e) {

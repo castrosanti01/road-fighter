@@ -1,6 +1,7 @@
 package logica;
 
 import java.awt.EventQueue;
+import java.util.List;
 
 import GUI.EntidadGrafica;
 import GUI.Ventana;
@@ -10,7 +11,8 @@ public class Juego {
 	
 	public static final int IZQUIERDA = 15000;
 	public static final int DERECHA = 15001;
-	public static final int ARRIBA = 15002;
+	public static final int ZETA = 15002;
+	public static final int EQUIS = 15003;
 	
 	protected Ventana mi_ventana;
 	protected Nivel mi_nivel;
@@ -24,12 +26,13 @@ public class Juego {
 	}
 	
 	private void asociar_entidades_logicas_graficas() {
-		Entidad e;
+		List<Entidad> entidades = mi_carretera.get_entidades();
 	    EntidadGrafica eg;
 	    
-	    e = mi_carretera.get_vehiculo_jugador();
-        eg = mi_ventana.agregar_entidad(e);
-        e.set_entidad_grafica(eg);
+	    for(Entidad e: entidades) {
+	    	eg = mi_ventana.agregar_entidad(e);
+	        e.set_entidad_grafica(eg);
+	    }
 	  }
 	
 	public void mover_jugador(int d) {

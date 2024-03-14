@@ -1,5 +1,6 @@
 package GUI;
 
+import java.awt.Color;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -8,95 +9,126 @@ import logica.EntidadLogica;
 import logica.Juego;
 
 @SuppressWarnings("serial")
-public class Ventana extends JFrame {
+public class Ventana extends JFrame implements VentanaAnimable{
 
     protected Juego mi_juego;
     protected JLayeredPane panel_principal;
     
     protected boolean bloquear_intercambios;
     
-    protected Timer movementTimer;
-    protected boolean isMovingLeft = false;
-    protected boolean isMovingRight = false;
+    protected Timer leftTimer, rightTimer, zTimer, xTimer;
+    protected boolean isMovingLeft, isMovingRight, isPressingZ, isPressingX = false;
     
-    private int size_label = 50;
+    public static final int size_label = 50;
 
     public Ventana(Juego j) {
         mi_juego = j;
         bloquear_intercambios = false;
         panel_principal = new JLayeredPane();
+        
+        inicializar();
+    }
 
-        setTitle("Road Fighter");
-        setSize(650, 500);
+	public EntidadGrafica agregar_entidad(EntidadLogica e) {
+        Celda celda = new Celda(this, e, e.get_size_label());
+        panel_principal.add(celda, 0);
+        return celda;
+    }
+    
+    @Override
+    public void animar_movimiento(Celda c) {
+    	new AnimadorMovimiento(2, 10, c);
+	}
+
+	@Override
+	public void animar_detonacion(Celda celda) {
+		// TODO Auto-generated method stub
+	}
+	
+	private void inicializar() {
+		setTitle("Road Fighter");
+        setSize(650, 525);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        getContentPane().setBackground(Color.GREEN);
         setResizable(false);
         setVisible(true);
         add(panel_principal);
 
         panel_principal.requestFocusInWindow();
 
-        //Control de tecla presionada " <- "
-        panel_principal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), "moveLeftPressed");
-        panel_principal.getActionMap().put("moveLeftPressed", new AbstractAction() {
+        panel_principal.addKeyListener(new KeyAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!bloquear_intercambios) {
-                    isMovingLeft = true;
-                    movementTimer.start();
+            public void keyPressed(KeyEvent e) {
+                int key = e.getKeyCode();
+                switch (key) {
+                    case KeyEvent.VK_LEFT:
+                        isMovingLeft = true;
+                        leftTimer.start();
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        isMovingRight = true;
+                        rightTimer.start();
+                        break;
+                    case KeyEvent.VK_Z:
+                        isPressingZ = true;
+                        zTimer.start();
+                        break;
+                    case KeyEvent.VK_X:
+                        isPressingX = true;
+                        xTimer.start();
+                        break;
                 }
             }
-        });
-        panel_principal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), "moveLeftReleased");
-        panel_principal.getActionMap().put("moveLeftReleased", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isMovingLeft = false;
-                movementTimer.stop();
-            }
-        });
-        
-        //Control de tecla presionada " -> "
-        panel_principal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "moveRightPressed");
-        panel_principal.getActionMap().put("moveRightPressed", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!bloquear_intercambios) {
-                    isMovingRight = true;
-                    movementTimer.start();
-                }
-            }
-        });
-        panel_principal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "moveRightReleased");
-        panel_principal.getActionMap().put("moveRightReleased", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isMovingRight = false;
-                movementTimer.stop();
-            }
-        });
-        
-        //Movimiento del jugador
-        movementTimer = new Timer(50, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (isMovingLeft) {
-                    mi_juego.mover_jugador(Juego.IZQUIERDA);
-                }
-                if (isMovingRight) {
-                    mi_juego.mover_jugador(Juego.DERECHA);
-                }
-            }
-        });
-    }
 
-    public EntidadGrafica agregar_entidad(EntidadLogica e) {
-        Celda celda = new Celda(this, e, size_label);
-        panel_principal.add(celda, 0);
-        return celda;
-    }
-    
-    public void animar_movimiento(Celda c) {
-	    new AnimadorMovimiento(2, 10, c);
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int key = e.getKeyCode();
+                switch (key) {
+                    case KeyEvent.VK_LEFT:
+                        isMovingLeft = false;
+                        leftTimer.stop();
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        isMovingRight = false;
+                        rightTimer.stop();
+                        break;
+                    case KeyEvent.VK_Z:
+                        isPressingZ = false;
+                        zTimer.stop();
+                        break;
+                    case KeyEvent.VK_X:
+                        isPressingX = false;
+                        xTimer.stop();
+                        break;
+                }
+            }
+        });
+        
+        // Inicialización de los Timers
+        leftTimer = new Timer(50, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	mi_juego.mover_jugador(Juego.IZQUIERDA);
+            }
+        });
+
+        rightTimer = new Timer(50, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	mi_juego.mover_jugador(Juego.DERECHA);
+            }
+        });
+
+        zTimer = new Timer(50, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	mi_juego.mover_jugador(Juego.ZETA);
+            }
+        });
+
+        xTimer = new Timer(50, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	mi_juego.mover_jugador(Juego.EQUIS);
+            }
+        });
 	}
-
+	
 }
