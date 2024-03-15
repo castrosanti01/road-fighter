@@ -1,5 +1,6 @@
 package GUI;
 
+import java.awt.Color;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -32,6 +33,10 @@ public class Ventana extends JFrame implements VentanaAnimable {
        
         inicializar();
     }
+    
+    public Carretera get_carretera() {
+		return mi_carretera;
+	}
 
     public EntidadGrafica agregar_entidad(EntidadLogica e) {
         Celda celda = new Celda(this, e);
@@ -54,7 +59,7 @@ public class Ventana extends JFrame implements VentanaAnimable {
         setSize(650, 525);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        //getContentPane().setBackground(Color.GREEN);
+        getContentPane().setBackground(Color.GREEN);
         setResizable(false);
         setVisible(true);
         add(panel_principal);
@@ -124,8 +129,7 @@ public class Ventana extends JFrame implements VentanaAnimable {
 
         zTimer = new Timer(50, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	mi_carretera.moveRoad();
-            	//mi_juego.mover_jugador(Juego.ZETA);
+            	mi_juego.mover_jugador(Juego.ZETA);
             }
         });
 
@@ -135,4 +139,6 @@ public class Ventana extends JFrame implements VentanaAnimable {
             }
         });
     }
+
+	
 }

@@ -20,7 +20,7 @@ public class Juego {
 	
 	public Juego() {
 		mi_ventana = new Ventana(this);
-		cerebro = new Cerebro(this);
+		cerebro = new Cerebro(mi_ventana);
 		mi_nivel = GeneradorNivel.cargar_nivel(cerebro);
 		asociar_entidades_logicas_graficas();
 	}
