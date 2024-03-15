@@ -13,14 +13,16 @@ public class Celda extends JLabel implements EntidadGrafica {
 	
 	protected Ventana mi_ventana;
 	protected EntidadLogica entidad_logica;
-	protected int size_label;
+	protected int size_label_x, size_label_y;
 	
-	public Celda(Ventana v, EntidadLogica e, int s) {
+	
+	public Celda(Ventana v, EntidadLogica e) {
 		super();
 		mi_ventana = v;
 		entidad_logica = e;
-		size_label = s;
-		setBounds(e.get_pos_x(), e.get_pos_y(), size_label, size_label);
+		size_label_x =  e.get_size_label_x(); 
+		size_label_y = e.get_size_label_y();
+		setBounds(e.get_pos_x(), e.get_pos_y(), size_label_x, size_label_y);
 		cambiar_imagen(e.get_imagen_representativa());	 
 	}
 	
@@ -28,8 +30,12 @@ public class Celda extends JLabel implements EntidadGrafica {
 		return entidad_logica;
 	}
 	
-	public int get_size_label() {
-		return size_label;
+	public int get_size_label_x() {
+		return size_label_x;
+	}
+	
+	public int get_size_label_y() {
+		return size_label_y;
 	}
 	
 	@Override
@@ -46,9 +52,11 @@ public class Celda extends JLabel implements EntidadGrafica {
 	
 	protected void cambiar_imagen(String i) {
 		ImageIcon imgIcon = new ImageIcon(this.getClass().getResource(i));
-		Image imgEscalada = imgIcon.getImage().getScaledInstance(size_label, size_label, Image.SCALE_SMOOTH);
+		Image imgEscalada = imgIcon.getImage().getScaledInstance(size_label_x, size_label_y, Image.SCALE_SMOOTH);
 		Icon iconoEscalado = new ImageIcon(imgEscalada);
 		setIcon(iconoEscalado);
 	}
+
+	
 
 }

@@ -1,6 +1,5 @@
 package GUI;
 
-import java.awt.Color;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -9,48 +8,53 @@ import logica.EntidadLogica;
 import logica.Juego;
 
 @SuppressWarnings("serial")
-public class Ventana extends JFrame implements VentanaAnimable{
+public class Ventana extends JFrame implements VentanaAnimable {
 
     protected Juego mi_juego;
+    protected Carretera mi_carretera; 
     protected JLayeredPane panel_principal;
-    
+
     protected boolean bloquear_intercambios;
-    
+
     protected Timer leftTimer, rightTimer, zTimer, xTimer;
     protected boolean isMovingLeft, isMovingRight, isPressingZ, isPressingX = false;
-    
-    public static final int size_label = 50;
+
+    public static final int size_label_x = 40;
 
     public Ventana(Juego j) {
         mi_juego = j;
-        bloquear_intercambios = false;
-        panel_principal = new JLayeredPane();
+        mi_carretera = new Carretera();
         
+        panel_principal = new JLayeredPane();
+        panel_principal.add(mi_carretera); 
+        
+        bloquear_intercambios = false;
+       
         inicializar();
     }
 
-	public EntidadGrafica agregar_entidad(EntidadLogica e) {
-        Celda celda = new Celda(this, e, e.get_size_label());
+    public EntidadGrafica agregar_entidad(EntidadLogica e) {
+        Celda celda = new Celda(this, e);
         panel_principal.add(celda, 0);
         return celda;
     }
-    
+
     @Override
     public void animar_movimiento(Celda c) {
-    	new AnimadorMovimiento(2, 10, c);
-	}
+        new AnimadorMovimiento(1, 2, c);
+    }
 
-	@Override
-	public void animar_detonacion(Celda celda) {
-		// TODO Auto-generated method stub
-	}
-	
-	private void inicializar() {
-		setTitle("Road Fighter");
+    @Override
+    public void animar_detonacion(Celda celda) {
+        // TODO Auto-generated method stub
+    }
+
+    private void inicializar() {
+        setTitle("Road Fighter");
         setSize(650, 525);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        getContentPane().setBackground(Color.GREEN);
+        //getContentPane().setBackground(Color.GREEN);
         setResizable(false);
         setVisible(true);
         add(panel_principal);
@@ -104,31 +108,31 @@ public class Ventana extends JFrame implements VentanaAnimable{
                 }
             }
         });
-        
+
         // Inicialización de los Timers
         leftTimer = new Timer(50, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	mi_juego.mover_jugador(Juego.IZQUIERDA);
+                mi_juego.mover_jugador(Juego.IZQUIERDA);
             }
         });
 
         rightTimer = new Timer(50, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	mi_juego.mover_jugador(Juego.DERECHA);
+                mi_juego.mover_jugador(Juego.DERECHA);
             }
         });
 
         zTimer = new Timer(50, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	mi_juego.mover_jugador(Juego.ZETA);
+            	mi_carretera.moveRoad();
+            	//mi_juego.mover_jugador(Juego.ZETA);
             }
         });
 
         xTimer = new Timer(50, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	mi_juego.mover_jugador(Juego.EQUIS);
+                mi_juego.mover_jugador(Juego.EQUIS);
             }
         });
-	}
-	
+    }
 }

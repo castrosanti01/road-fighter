@@ -8,8 +8,10 @@ public abstract class Entidad implements EntidadLogica {
 	
 	public int pos_x;
 	public int pos_y;
-	public int size_label = Ventana.size_label;
 	public int velocidad;
+	
+	public int size_label_x = Ventana.size_label_x;
+	public int size_label_y = size_label_x * 2;
 	
 	protected String [] imagenes_representativas;
 	protected EntidadGrafica entidad_grafica;
@@ -31,8 +33,13 @@ public abstract class Entidad implements EntidadLogica {
 	}
 	
 	@Override
-	public int get_size_label() {
-		return size_label;
+	public int get_size_label_x() {
+		return size_label_x;
+	}
+	
+	@Override
+	public int get_size_label_y() {
+		return size_label_y;
 	}
 	
 	public void set_entidad_grafica(EntidadGrafica e) {
