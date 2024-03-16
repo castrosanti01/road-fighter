@@ -35,7 +35,7 @@ public class Carretera extends Canvas {
     }
 
     public void moveRoad(int velocidad) {
-        roadPositionY += 15 * velocidad; // Ajusta la velocidad de movimiento
+        roadPositionY += (velocidad / 10); // Ajusta la velocidad de movimiento
         repaint();
     }
     

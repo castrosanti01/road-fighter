@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import animadores.AnimadorMovimiento;
+import entidades.VehiculoJugador;
 import logica.EntidadLogica;
 import logica.Juego;
 
@@ -17,8 +18,9 @@ public class Ventana extends JFrame implements VentanaAnimable {
 
     protected boolean bloquear_intercambios;
 
-    protected Timer leftTimer, rightTimer, zTimer, xTimer;
-    protected boolean isMovingLeft, isMovingRight, isPressingZ, isPressingX = false;
+    protected Timer leftTimer, rightTimer, zTimer, xTimer, desacelerar;
+    
+    protected JLabel velocidad;
 
     public static final int size_label_x = 40;
 
@@ -53,6 +55,10 @@ public class Ventana extends JFrame implements VentanaAnimable {
     public void animar_detonacion(Celda celda) {
         // TODO Auto-generated method stub
     }
+    
+    public void actualizar_velocidad(int velocimetro) {
+    	velocidad.setText(velocimetro+" Km/h");
+	}
 
     private void inicializar() {
         setTitle("Road Fighter");
@@ -62,31 +68,25 @@ public class Ventana extends JFrame implements VentanaAnimable {
         getContentPane().setBackground(Color.GREEN);
         setResizable(false);
         setVisible(true);
-        add(panel_principal);
-
+        getContentPane().add(panel_principal);
+        
+        velocidad = new JLabel("0 Km/h");
+        velocidad.setBounds(406, 154, 76, 28);
+        panel_principal.add(velocidad);
+        
         panel_principal.requestFocusInWindow();
-
         panel_principal.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 int key = e.getKeyCode();
                 switch (key) {
-                    case KeyEvent.VK_LEFT:
-                        isMovingLeft = true;
-                        leftTimer.start();
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        isMovingRight = true;
-                        rightTimer.start();
-                        break;
-                    case KeyEvent.VK_Z:
-                        isPressingZ = true;
-                        zTimer.start();
-                        break;
-                    case KeyEvent.VK_X:
-                        isPressingX = true;
-                        xTimer.start();
-                        break;
+                    case KeyEvent.VK_LEFT: leftTimer.start(); break;
+                    
+                    case KeyEvent.VK_RIGHT: rightTimer.start(); break;
+                    
+                    case KeyEvent.VK_Z: zTimer.start(); break;
+                    
+                    case KeyEvent.VK_X: xTimer.start(); break;
                 }
             }
 
@@ -94,26 +94,33 @@ public class Ventana extends JFrame implements VentanaAnimable {
             public void keyReleased(KeyEvent e) {
                 int key = e.getKeyCode();
                 switch (key) {
-                    case KeyEvent.VK_LEFT:
-                        isMovingLeft = false;
-                        leftTimer.stop();
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        isMovingRight = false;
-                        rightTimer.stop();
-                        break;
+                    case KeyEvent.VK_LEFT: leftTimer.stop(); break;
+                    
+                    case KeyEvent.VK_RIGHT: rightTimer.stop(); break;
+                    
                     case KeyEvent.VK_Z:
-                        isPressingZ = false;
-                        zTimer.stop();
+                    	zTimer.stop();
+                        desacelerar.start();
                         break;
                     case KeyEvent.VK_X:
-                        isPressingX = false;
+                    	//esperar 1 segundo
                         xTimer.stop();
                         break;
                 }
             }
         });
-
+        
+        desacelerar = new Timer(50, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	mi_juego.desacelerar();
+            	VehiculoJugador aux = (VehiculoJugador) mi_juego.get_vehiculo_jugador();
+            	if(aux.get_velocidad() == 0) {
+                    desacelerar.stop();
+            	}
+            }
+        });
+        
         // Inicialización de los Timers
         leftTimer = new Timer(50, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -140,5 +147,4 @@ public class Ventana extends JFrame implements VentanaAnimable {
         });
     }
 
-	
 }

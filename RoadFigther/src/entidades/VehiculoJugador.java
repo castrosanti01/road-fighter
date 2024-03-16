@@ -10,6 +10,7 @@ public class VehiculoJugador extends Entidad{
 		super(x, y, path_img);
 		combustible = 100;
 		distancia_recorrida = 0;
+		velocidad = 0;
 		puntaje = 0;
 	}
 	
@@ -17,8 +18,20 @@ public class VehiculoJugador extends Entidad{
 		return distancia_recorrida;
 	}
 	
-	public void aumentar_distancia(int distancia) {
-		distancia_recorrida +=  distancia;
+	public int get_velocidad() {
+		return velocidad;
 	}
+	
+	public void aumentar_velocidad(int incremento) {
+		velocidad += incremento;
+		distancia_recorrida +=  incremento;
+	}
+	
+	public void disminuir_velocidad(int decremento) {
+		if(velocidad > 0)
+			velocidad -= decremento;
+	}
+
+	
 	
 }
