@@ -6,8 +6,8 @@ public class VehiculoJugador extends Entidad{
 	public int distancia_recorrida;
 	public int puntaje;
 	
-	public VehiculoJugador(int x, int y, String path_img) {
-		super(x, y, path_img);
+	public VehiculoJugador(int x, String path_img) {
+		super(x, 375, path_img);
 		combustible = 100;
 		distancia_recorrida = 0;
 		velocidad = 0;
@@ -45,8 +45,8 @@ public class VehiculoJugador extends Entidad{
 			velocidad = 0;
 	}
 
-	
-
-	
+	public void set_velocidad(int i) {
+		velocidad = i;
+	}
 	
 }

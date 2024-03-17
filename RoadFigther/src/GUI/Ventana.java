@@ -8,6 +8,7 @@ import animadores.AnimadorMovimiento;
 import entidades.VehiculoJugador;
 import logica.EntidadLogica;
 import logica.Juego;
+import java.awt.Font;
 
 @SuppressWarnings("serial")
 public class Ventana extends JFrame implements VentanaAnimable {
@@ -17,11 +18,11 @@ public class Ventana extends JFrame implements VentanaAnimable {
     protected JLayeredPane panel_principal;
     protected JPanel panel_carretera;
 
-    protected boolean bloquear_intercambios, isPressingX, isPressingZ;
+    protected boolean bloquear_jugabilidad, isPressingX, isPressingZ;
 
     protected Timer leftTimer, rightTimer, zTimer, xTimer, desacelerar;
     
-    protected JLabel velocidad;
+    protected JLabel velocimetro, combustible;
 
     public static final int size_label_x = 40;
     
@@ -29,7 +30,7 @@ public class Ventana extends JFrame implements VentanaAnimable {
     public Ventana(Juego j) {
         mi_juego = j;
         panel_principal = new JLayeredPane();
-        bloquear_intercambios = false;
+        bloquear_jugabilidad = false;
         inicializar();
     }
     
@@ -49,13 +50,8 @@ public class Ventana extends JFrame implements VentanaAnimable {
         new AnimadorMovimiento(1, 2, c);
     }
 
-    @Override
-    public void animar_detonacion(Celda celda) {
-        // TODO Auto-generated method stub
-    }
-    
-    public void actualizar_velocidad(int velocimetro) {
-    	velocidad.setText(velocimetro+" Km/h");
+    public void actualizar_velocidad(int vel) {
+    	velocimetro.setText(vel+" Km/h");
 	}
     
     private void inicializar() {
@@ -74,9 +70,15 @@ public class Ventana extends JFrame implements VentanaAnimable {
         panel_principal.add(panel_carretera);
         panel_carretera.setLayout(null);
         
-        velocidad = new JLabel("0 Km/h");
-        velocidad.setBounds(406, 154, 76, 28);
-        panel_principal.add(velocidad);
+        velocimetro = new JLabel("0 Km/h");
+        velocimetro.setFont(new Font("Consolas", Font.BOLD, 30));
+        velocimetro.setBounds(410, 125, 179, 36);
+        panel_principal.add(velocimetro);
+        
+        combustible = new JLabel("FUEL: ");
+        combustible.setFont(new Font("Consolas", Font.BOLD, 30));
+        combustible.setBounds(410, 172, 179, 36);
+        panel_principal.add(combustible);
         
         panel_principal.requestFocusInWindow();
         panel_principal.addKeyListener(new KeyAdapter() {
@@ -162,6 +164,8 @@ public class Ventana extends JFrame implements VentanaAnimable {
         });
     }
 
-	
+	public void notificar_fin_de_pista() {
+		desacelerar.stop();
+	}
 
 }

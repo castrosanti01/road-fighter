@@ -23,6 +23,7 @@ public class Juego {
 	
 	protected VehiculoJugador vehiculo_jugador;
 	protected List<Entidad> entidades;
+	protected boolean jugabilidad_bloqueada = false;
 	
 	protected int limite_izquierdo;
 	protected int limite_derecho;
@@ -68,7 +69,8 @@ public class Juego {
 	}
 	
 	public void mover_jugador(int d) {
-		switch (d) {
+		if(!jugabilidad_bloqueada) {
+			switch (d) {
 			case Juego.IZQUIERDA: {
 				cambiar_posicion(vehiculo_jugador.get_pos_x() - 10);
 				break;
@@ -85,6 +87,7 @@ public class Juego {
 				avanzar_carretera(2);
 				break;
 			}
+		}
 		}
 	}
 	
@@ -114,6 +117,12 @@ public class Juego {
 	private boolean en_rango(int nueva_pos) {
 		return nueva_pos >= limite_izquierdo && nueva_pos <= limite_derecho;
 	}
+	
+	public void notificar_fin_de_pista() {
+		jugabilidad_bloqueada = true;
+		vehiculo_jugador.set_velocidad(0);
+		mi_ventana.notificar_fin_de_pista();
+	}
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -126,4 +135,5 @@ public class Juego {
 	      }
 	    });
 	 }
+
 }
