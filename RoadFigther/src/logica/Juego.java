@@ -91,8 +91,8 @@ public class Juego {
 	private void cambiar_posicion(int nueva_pos) {
 		if(en_rango(nueva_pos))
 			vehiculo_jugador.cambiar_posicion(nueva_pos);
-		if(nueva_pos == limite_izquierdo && vehiculo_jugador.get_velocidad() > 120)
-			vehiculo_jugador.detonar();
+		if((nueva_pos == limite_izquierdo | nueva_pos == limite_derecho)&& vehiculo_jugador.get_velocidad() > 120)
+			vehiculo_jugador.detonar(); //seguir
 	}
 
 	private void avanzar_carretera(int cambio) {

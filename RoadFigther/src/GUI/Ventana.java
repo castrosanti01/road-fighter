@@ -17,7 +17,7 @@ public class Ventana extends JFrame implements VentanaAnimable {
     protected JLayeredPane panel_principal;
     protected JPanel panel_carretera;
 
-    protected boolean bloquear_intercambios, estaAcelerando;
+    protected boolean bloquear_intercambios, isPressingX, isPressingZ;
 
     protected Timer leftTimer, rightTimer, zTimer, xTimer, desacelerar;
     
@@ -88,9 +88,9 @@ public class Ventana extends JFrame implements VentanaAnimable {
                     
                     case KeyEvent.VK_RIGHT: rightTimer.start(); break;
                     
-                    case KeyEvent.VK_Z: zTimer.start(); estaAcelerando = true; break;
+                    case KeyEvent.VK_Z: zTimer.start(); isPressingZ = true; break;
                     
-                    case KeyEvent.VK_X: xTimer.start(); estaAcelerando = true; break;
+                    case KeyEvent.VK_X: xTimer.start(); isPressingX = true; break;
                 }
             }
 
@@ -103,12 +103,12 @@ public class Ventana extends JFrame implements VentanaAnimable {
                     case KeyEvent.VK_RIGHT: rightTimer.stop(); break;
                     
                     case KeyEvent.VK_Z:
-                    	estaAcelerando = false;
+                    	isPressingZ = false;
                     	zTimer.stop();
                         desacelerar.start();
                         break;
                     case KeyEvent.VK_X:
-                    	estaAcelerando = false;
+                    	isPressingX = false;
                         xTimer.stop();
                         desacelerar.start();
                         break;
@@ -119,11 +119,17 @@ public class Ventana extends JFrame implements VentanaAnimable {
         desacelerar = new Timer(50, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	if(estaAcelerando)
+            	VehiculoJugador aux = (VehiculoJugador) mi_juego.get_vehiculo_jugador();
+            	if(isPressingX)
             		desacelerar.stop();
+            	else if(isPressingZ){
+            		if(aux.get_velocidad() > 200)
+            			mi_juego.desacelerar();
+            		if(aux.get_velocidad() == 200)
+                        desacelerar.stop();
+            	}
             	else {
             		mi_juego.desacelerar();
-            		VehiculoJugador aux = (VehiculoJugador) mi_juego.get_vehiculo_jugador();
                 	if(aux.get_velocidad() == 0)
                         desacelerar.stop();
             	}
