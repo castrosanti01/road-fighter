@@ -22,15 +22,30 @@ public class VehiculoJugador extends Entidad{
 		return velocidad;
 	}
 	
-	public void aumentar_velocidad(int incremento) {
-		velocidad += incremento;
-		distancia_recorrida +=  incremento;
+	public void aumentar_velocidad(int cambio) {
+		switch(cambio) {
+        	case 1: 
+        		if(velocidad < 198)
+        			velocidad += 5 * cambio; 
+        		break;
+        	case 2: 
+        		if(velocidad < 400)
+        			velocidad += 5 * cambio; 
+        		break;
+		}
+		distancia_recorrida +=  5 * cambio;
 	}
 	
 	public void disminuir_velocidad(int decremento) {
-		if(velocidad > 0)
+		if(velocidad - decremento > 0) {
 			velocidad -= decremento;
+			distancia_recorrida += decremento;
+		}
+		else
+			velocidad = 0;
 	}
+
+	
 
 	
 	

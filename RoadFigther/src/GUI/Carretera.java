@@ -6,15 +6,19 @@ import java.awt.Graphics;
 
 @SuppressWarnings("serial")
 public class Carretera extends Canvas {
+	
+	private static final Color ROAD_COLOR = Color.DARK_GRAY;
+	private static final Color LINE_COLOR = Color.WHITE;
 	private static final int WIDTH = 400;
-    private static final int HEIGHT = 10000;
-    private static final int ROAD_WIDTH = 240;
-    private static final Color ROAD_COLOR = Color.GRAY;
-    private static final Color LINE_COLOR = Color.WHITE;
-    private int roadPositionY = -HEIGHT + 500;
+	private int ROAD_WIDTH;
+	private int HEIGHT;
+    private int roadPositionY;
 
-    public Carretera() {
-        setSize(WIDTH, HEIGHT);
+    public Carretera(int ancho, int largo) {
+    	ROAD_WIDTH = ancho;
+    	HEIGHT = largo;
+    	roadPositionY = -HEIGHT + 500;
+    	setSize(WIDTH, HEIGHT);
     }
 
     @Override
@@ -36,6 +40,8 @@ public class Carretera extends Canvas {
 
     public void moveRoad(int velocidad) {
         roadPositionY += (velocidad / 10); // Ajusta la velocidad de movimiento
+        if(roadPositionY >= 500)
+        	System.out.println("llegaste");
         repaint();
     }
     

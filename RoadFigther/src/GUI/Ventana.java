@@ -15,31 +15,29 @@ public class Ventana extends JFrame implements VentanaAnimable {
     protected Juego mi_juego;
     protected Carretera mi_carretera; 
     protected JLayeredPane panel_principal;
+    protected JPanel panel_carretera;
 
-    protected boolean bloquear_intercambios;
+    protected boolean bloquear_intercambios, estaAcelerando;
 
     protected Timer leftTimer, rightTimer, zTimer, xTimer, desacelerar;
     
     protected JLabel velocidad;
 
     public static final int size_label_x = 40;
+    
 
     public Ventana(Juego j) {
         mi_juego = j;
-        mi_carretera = new Carretera();
-        
         panel_principal = new JLayeredPane();
-        panel_principal.add(mi_carretera); 
-        
         bloquear_intercambios = false;
-       
         inicializar();
     }
     
-    public Carretera get_carretera() {
-		return mi_carretera;
+    public void resetear_carretera(Carretera c) {
+        mi_carretera = c;
+        panel_carretera.add(mi_carretera);
 	}
-
+    
     public EntidadGrafica agregar_entidad(EntidadLogica e) {
         Celda celda = new Celda(this, e);
         panel_principal.add(celda, 0);
@@ -59,7 +57,7 @@ public class Ventana extends JFrame implements VentanaAnimable {
     public void actualizar_velocidad(int velocimetro) {
     	velocidad.setText(velocimetro+" Km/h");
 	}
-
+    
     private void inicializar() {
         setTitle("Road Fighter");
         setSize(650, 525);
@@ -69,6 +67,12 @@ public class Ventana extends JFrame implements VentanaAnimable {
         setResizable(false);
         setVisible(true);
         getContentPane().add(panel_principal);
+        
+        panel_carretera = new JPanel();
+        panel_carretera.setBackground(Color.DARK_GRAY);
+        panel_carretera.setBounds(0, 0, 400, 500);
+        panel_principal.add(panel_carretera);
+        panel_carretera.setLayout(null);
         
         velocidad = new JLabel("0 Km/h");
         velocidad.setBounds(406, 154, 76, 28);
@@ -84,9 +88,9 @@ public class Ventana extends JFrame implements VentanaAnimable {
                     
                     case KeyEvent.VK_RIGHT: rightTimer.start(); break;
                     
-                    case KeyEvent.VK_Z: zTimer.start(); break;
+                    case KeyEvent.VK_Z: zTimer.start(); estaAcelerando = true; break;
                     
-                    case KeyEvent.VK_X: xTimer.start(); break;
+                    case KeyEvent.VK_X: xTimer.start(); estaAcelerando = true; break;
                 }
             }
 
@@ -99,12 +103,14 @@ public class Ventana extends JFrame implements VentanaAnimable {
                     case KeyEvent.VK_RIGHT: rightTimer.stop(); break;
                     
                     case KeyEvent.VK_Z:
+                    	estaAcelerando = false;
                     	zTimer.stop();
                         desacelerar.start();
                         break;
                     case KeyEvent.VK_X:
-                    	//esperar 1 segundo
+                    	estaAcelerando = false;
                         xTimer.stop();
+                        desacelerar.start();
                         break;
                 }
             }
@@ -113,10 +119,13 @@ public class Ventana extends JFrame implements VentanaAnimable {
         desacelerar = new Timer(50, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	mi_juego.desacelerar();
-            	VehiculoJugador aux = (VehiculoJugador) mi_juego.get_vehiculo_jugador();
-            	if(aux.get_velocidad() == 0) {
-                    desacelerar.stop();
+            	if(estaAcelerando)
+            		desacelerar.stop();
+            	else {
+            		mi_juego.desacelerar();
+            		VehiculoJugador aux = (VehiculoJugador) mi_juego.get_vehiculo_jugador();
+                	if(aux.get_velocidad() == 0)
+                        desacelerar.stop();
             	}
             }
         });
@@ -146,5 +155,7 @@ public class Ventana extends JFrame implements VentanaAnimable {
             }
         });
     }
+
+	
 
 }

@@ -46,8 +46,7 @@ public class Celda extends JLabel implements EntidadGrafica {
 
 	@Override
 	public void notificarse_detonar() {
-		// TODO Auto-generated method stub
-		
+		cambiar_imagen(entidad_logica.get_imagen_representativa());	
 	}
 	
 	protected void cambiar_imagen(String i) {

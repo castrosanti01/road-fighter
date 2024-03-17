@@ -6,12 +6,14 @@ import logica.EntidadLogica;
 
 public abstract class Entidad implements EntidadLogica {
 	
-	public int pos_x;
-	public int pos_y;
-	public int velocidad;
+	protected int pos_x;
+	protected int pos_y;
+	protected int velocidad;
 	
-	public int size_label_x = Ventana.size_label_x;
-	public int size_label_y = size_label_x * 2;
+	protected int size_label_x = Ventana.size_label_x;
+	protected int size_label_y = size_label_x * 2;
+	
+	protected boolean detonado;
 	
 	protected String [] imagenes_representativas;
 	protected EntidadGrafica entidad_grafica;
@@ -51,16 +53,21 @@ public abstract class Entidad implements EntidadLogica {
 		entidad_grafica.notificarse_cambio_posicion();
 	}
 	
+	public void detonar() {
+		detonado = true;
+		entidad_grafica.notificarse_detonar();
+	}
+	
 	@Override
 	public String get_imagen_representativa() {
 		int indice = 0;
-		//indice += (enfocada ? 1 : 0);
+		indice += (detonado ? 1 : 0);
 		return imagenes_representativas[indice];
 	}
 	
 	protected void cargar_imagenes_representativas(String path_img) {
 		imagenes_representativas = new String [2];
 		imagenes_representativas[0] = path_img + ".png";
-		//imagenes_representativas[1] = path_img +"-detonado.gif";
+		imagenes_representativas[1] = path_img +"_detonado.png";
 	}
 }
