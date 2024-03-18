@@ -54,20 +54,20 @@ public abstract class Entidad implements EntidadLogica {
 	}
 	
 	public void detonar() {
+		velocidad = 0;
 		detonado = true;
 		entidad_grafica.notificarse_detonar();
 	}
 	
 	@Override
-	public String get_imagen_representativa() {
-		int indice = 0;
-		indice += (detonado ? 1 : 0);
+	public String get_imagen_representativa(int indice) {
 		return imagenes_representativas[indice];
 	}
 	
 	protected void cargar_imagenes_representativas(String path_img) {
-		imagenes_representativas = new String [2];
+		imagenes_representativas = new String [3];
 		imagenes_representativas[0] = path_img + ".png";
 		imagenes_representativas[1] = path_img +"_detonado.png";
+		imagenes_representativas[2] = "/imagenes/0.png";
 	}
 }

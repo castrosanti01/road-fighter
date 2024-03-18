@@ -12,6 +12,6 @@ public interface EntidadLogica {
 	
 	public int get_size_label_y();
 
-	public String get_imagen_representativa();
+	public String get_imagen_representativa(int indice);
 
 }

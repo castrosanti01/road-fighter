@@ -1,55 +1,69 @@
 package logica;
 
+import GUI.Carretera;
+import entidades.VehiculoJugador;
+
 public class Nivel {
 
-	protected int nivel_nro;
-	protected int fila_inicial_jugador;
-	protected int columna_inicial_jugador;
-
+	protected int nivel;
+	protected int vidas;
+	protected Carretera carretera;
+	protected VehiculoJugador jugador;
 
 	public static class Builder {
 
-		private int nivel_nro;
-	    private int fila_inicial_jugador;
-	    private int columna_inicial_jugador;
+		private int nivel;
+	    private int vidas;
+	    protected Carretera carretera;
+	    protected VehiculoJugador jugador;
     
 	    public Nivel.Builder nivelActual(int nivel_nro) {
-	    	this.nivel_nro = nivel_nro;
+	    	this.nivel = nivel_nro;
 	    	return this;
 	    }
 	
-	    public Nivel.Builder filaInicial(int fila_inicial_jugador) {
-	    	this.fila_inicial_jugador = fila_inicial_jugador;
+	    public Nivel.Builder vidas(int vidas) {
+	    	this.vidas = vidas;
 	    	return this;
 	    }
-	
-	    public Nivel.Builder columnaInicial(int columna_inicial_jugador) {
-	    	this.columna_inicial_jugador = columna_inicial_jugador;
+	    
+	    public Nivel.Builder carretera(Carretera carretera) {
+	    	this.carretera = carretera;
+	    	return this;
+	    }
+	    
+	    public Nivel.Builder vehiculoJugador(VehiculoJugador jugador) {
+	    	this.jugador = jugador;
 	    	return this;
 	    }
 	
 	    public Nivel build() {
 	    	return new Nivel(this);
 	    }
-	
+
 	}
 	
 	public Nivel(Builder builder) {
-	    this.nivel_nro = builder.nivel_nro;
-	    this.fila_inicial_jugador = builder.fila_inicial_jugador;
-	    this.columna_inicial_jugador = builder.columna_inicial_jugador;
+	    this.nivel = builder.nivel;
+	    this.vidas = builder.vidas;
+	    this.carretera = builder.carretera;
+	    this.jugador = builder.jugador;
 	}
 	
-	public int get_nro_nivel() {
-	    return nivel_nro;
+	public int get_numero_nivel() {
+	    return nivel;
 	}
 	
-	public int get_fila_inicial_jugador() {
-	    return fila_inicial_jugador;
+	public int get_vidas() {
+	    return vidas;
 	}
 	
-	public int get_columna_inicial_jugador() {
-	    return columna_inicial_jugador;
+	public Carretera get_carretera() {
+	    return carretera;
 	}
-
+	
+	public VehiculoJugador get_vehiculo_jugador() {
+	    return jugador;
+	}
+	
 }

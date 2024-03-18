@@ -23,8 +23,8 @@ public class Juego {
 	
 	protected VehiculoJugador vehiculo_jugador;
 	protected List<Entidad> entidades;
-	protected boolean jugabilidad_bloqueada = false;
 	
+	protected int vidas;
 	protected int limite_izquierdo;
 	protected int limite_derecho;
 	
@@ -35,28 +35,24 @@ public class Juego {
 		asociar_entidades_logicas_graficas();
 	}
 	
-	public void resetear_carretera(Carretera carretera) {
-		mi_ventana.resetear_carretera(carretera);
-		mi_carretera = carretera;
+	private void asociar_entidades_logicas_graficas() {
+		vidas = mi_nivel.get_vidas();
+		vehiculo_jugador = mi_nivel.get_vehiculo_jugador();
+		mi_carretera = mi_nivel.get_carretera();
 		limite_izquierdo = mi_carretera.get_limite_izquierdo();
 		limite_derecho = mi_carretera.get_limite_derecho();
-	}
-	
-	public void agregar_jugador(Entidad vehiculoJugador) {
-		VehiculoJugador vehiculo = (VehiculoJugador) vehiculoJugador;
-		vehiculo_jugador = vehiculo;
-	}
-	
-	private void asociar_entidades_logicas_graficas() {
-		Entidad jugador = vehiculo_jugador;
+		
+		mi_ventana.actualizar_vidas(vidas);
+		mi_ventana.resetear_carretera(mi_carretera);
+		
 		EntidadGrafica eg;
 	    
 	    for(Entidad e: entidades) {
 	    	eg = mi_ventana.agregar_entidad(e);
 	        e.set_entidad_grafica(eg);
 	    }
-	    eg = mi_ventana.agregar_entidad(jugador);
-	    jugador.set_entidad_grafica(eg);
+	    eg = mi_ventana.agregar_entidad(vehiculo_jugador);
+	    vehiculo_jugador.set_entidad_grafica(eg);
 	    
 	  }
 	
@@ -69,8 +65,7 @@ public class Juego {
 	}
 	
 	public void mover_jugador(int d) {
-		if(!jugabilidad_bloqueada) {
-			switch (d) {
+		switch (d) {
 			case Juego.IZQUIERDA: {
 				cambiar_posicion(vehiculo_jugador.get_pos_x() - 10);
 				break;
@@ -88,14 +83,23 @@ public class Juego {
 				break;
 			}
 		}
-		}
 	}
 	
 	private void cambiar_posicion(int nueva_pos) {
 		if(en_rango(nueva_pos))
 			vehiculo_jugador.cambiar_posicion(nueva_pos);
-		if((nueva_pos == limite_izquierdo | nueva_pos == limite_derecho)&& vehiculo_jugador.get_velocidad() > 120)
-			vehiculo_jugador.detonar(); //seguir
+		//Explotar
+		if((nueva_pos == limite_izquierdo | nueva_pos == limite_derecho)&& vehiculo_jugador.get_velocidad() > 120) {
+			if(vidas == 0) {
+				System.out.println("loser");
+			}
+			else {
+				vehiculo_jugador.detonar(); 
+				vehiculo_jugador.reivir();
+				mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
+				mi_ventana.actualizar_vidas(--vidas);
+			}
+		}
 	}
 
 	private void avanzar_carretera(int cambio) {
@@ -119,7 +123,6 @@ public class Juego {
 	}
 	
 	public void notificar_fin_de_pista() {
-		jugabilidad_bloqueada = true;
 		vehiculo_jugador.set_velocidad(0);
 		mi_ventana.notificar_fin_de_pista();
 	}

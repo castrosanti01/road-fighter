@@ -23,7 +23,7 @@ public class Celda extends JLabel implements EntidadGrafica {
 		size_label_x =  e.get_size_label_x(); 
 		size_label_y = e.get_size_label_y();
 		setBounds(e.get_pos_x(), e.get_pos_y(), size_label_x, size_label_y);
-		cambiar_imagen(e.get_imagen_representativa());	 
+		cambiar_imagen(e.get_imagen_representativa(0));	 
 	}
 	
 	public EntidadLogica get_entidad_logica() {
@@ -46,10 +46,15 @@ public class Celda extends JLabel implements EntidadGrafica {
 
 	@Override
 	public void notificarse_detonar() {
-		cambiar_imagen(entidad_logica.get_imagen_representativa());	
+		mi_ventana.animar_detonacion(this);
 	}
 	
-	protected void cambiar_imagen(String i) {
+	@Override
+	public void notificarse_revivir() {
+		mi_ventana.animar_aparicion(this);
+	}
+	
+	public void cambiar_imagen(String i) {
 		ImageIcon imgIcon = new ImageIcon(this.getClass().getResource(i));
 		Image imgEscalada = imgIcon.getImage().getScaledInstance(size_label_x, size_label_y, Image.SCALE_SMOOTH);
 		Icon iconoEscalado = new ImageIcon(imgEscalada);

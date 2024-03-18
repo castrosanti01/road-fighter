@@ -22,6 +22,24 @@ public class VehiculoJugador extends Entidad{
 		return velocidad;
 	}
 	
+	public boolean get_detonado() {
+		return detonado;
+	}
+	
+	public void set_velocidad(int v) {
+		velocidad = v;
+	}
+	
+	public void detonar() {
+		super.detonar();
+		cambiar_posicion(200);
+	}
+	
+	public void reivir() {
+		detonado = false;
+		entidad_grafica.notificarse_revivir();
+	}
+	
 	public void aumentar_velocidad(int cambio) {
 		switch(cambio) {
         	case 1: 
@@ -45,8 +63,4 @@ public class VehiculoJugador extends Entidad{
 			velocidad = 0;
 	}
 
-	public void set_velocidad(int i) {
-		velocidad = i;
-	}
-	
 }
