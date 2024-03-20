@@ -23,6 +23,7 @@ public class Juego {
 	
 	protected VehiculoJugador vehiculo_jugador;
 	protected List<Entidad> entidades;
+	protected List<Entidad> entidades_a_eliminar;
 	
 	protected int vidas;
 	protected int limite_izquierdo;
@@ -32,6 +33,7 @@ public class Juego {
 		mi_ventana = new Ventana(this);
 		mi_nivel = GeneradorNivel.cargar_nivel(this);
 		entidades = new LinkedList<Entidad>();
+		entidades_a_eliminar = new LinkedList<Entidad>();
 		asociar_entidades_logicas_graficas();
 	}
 	
@@ -39,6 +41,7 @@ public class Juego {
 		vidas = mi_nivel.get_vidas();
 		vehiculo_jugador = mi_nivel.get_vehiculo_jugador();
 		mi_carretera = mi_nivel.get_carretera();
+		entidades = mi_nivel.get_entidades();
 		limite_izquierdo = mi_carretera.get_limite_izquierdo();
 		limite_derecho = mi_carretera.get_limite_derecho();
 		
@@ -89,15 +92,27 @@ public class Juego {
 		if(en_rango(nueva_pos))
 			vehiculo_jugador.cambiar_posicion(nueva_pos);
 		//Explotar
-		if((nueva_pos == limite_izquierdo | nueva_pos == limite_derecho)&& vehiculo_jugador.get_velocidad() > 120) {
-			if(vidas == 0) {
-				System.out.println("loser");
+		if(nueva_pos == limite_izquierdo | nueva_pos == limite_derecho) {
+			if(vehiculo_jugador.get_velocidad() >= 150){
+				if(vidas == 1) {
+					--vidas;
+					System.out.println("loser");
+				}
+				else {
+					
+					for(Entidad e: entidades) 
+						e.cambiar_posicion_animado(e.get_pos_y() - 600);
+					vehiculo_jugador.detonar();
+					vehiculo_jugador.reivir();
+					mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
+					mi_ventana.actualizar_vidas(--vidas);
+				}
 			}
 			else {
-				vehiculo_jugador.detonar(); 
-				vehiculo_jugador.reivir();
-				mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
-				mi_ventana.actualizar_vidas(--vidas);
+				if(nueva_pos == limite_izquierdo)
+					cambiar_posicion(vehiculo_jugador.get_pos_x() + 20);
+				if(nueva_pos == limite_derecho)
+					cambiar_posicion(vehiculo_jugador.get_pos_x() - 20);
 			}
 		}
 	}
@@ -106,16 +121,33 @@ public class Juego {
 		vehiculo_jugador.aumentar_velocidad(cambio);
 		mi_carretera.moveRoad(vehiculo_jugador.get_velocidad());
 		mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
+		for(Entidad e: entidades) {
+			if(e.get_pos_y() > 500) {
+				//500 sale de la pantalla
+				entidades_a_eliminar.add(e);
+			}
+			e.cambiar_posicion(e.get_pos_y() + vehiculo_jugador.get_velocidad()/25);	//mas alto, mas rapido son
+		}
+		for(Entidad e: entidades_a_eliminar)
+			entidades.remove(e);
 		
-		/*for(Entidad e: entidades) {
-			e.cambiar_posicion(e.get_pos_y() + (10 * cant));
-		}*/
 	}
 	
 	public void desacelerar() {
-		vehiculo_jugador.disminuir_velocidad(10);
+		vehiculo_jugador.disminuir_velocidad(8);
 		mi_carretera.moveRoad(vehiculo_jugador.get_velocidad());
 		mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
+		for(Entidad e: entidades) {
+			e.cambiar_posicion(e.get_pos_y() - 400/50);
+			if(vehiculo_jugador.get_velocidad() == 0) {
+				if(e.get_pos_y() > 0) {
+					e.cambiar_posicion_animado(-90);
+					entidades_a_eliminar.add(e);
+				}
+			}
+		}
+		for(Entidad e: entidades_a_eliminar)
+			entidades.remove(e);
 	}
 	
 	private boolean en_rango(int nueva_pos) {

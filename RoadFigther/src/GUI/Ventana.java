@@ -172,6 +172,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
             }
         });
         
+        // Inicialización de los Timers
         desacelerar = new Timer(50, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -179,20 +180,20 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
             	if(isPressingX)
             		desacelerar.stop();
             	else if(isPressingZ){
-            		if(aux.get_velocidad() > 200)
+            		if(aux.get_velocidad() > 198)
             			mi_juego.desacelerar();
-            		if(aux.get_velocidad() == 200)
+            		if(aux.get_velocidad() == 198)
                         desacelerar.stop();
             	}
             	else {
             		mi_juego.desacelerar();
-                	if(aux.get_velocidad() == 0)
+                	if(aux.get_velocidad() == 0) {
                         desacelerar.stop();
+                	}
             	}
             }
         });
         
-        // Inicialización de los Timers
         leftTimer = new Timer(50, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 mi_juego.mover_jugador(Juego.IZQUIERDA);

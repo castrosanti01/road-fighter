@@ -41,6 +41,11 @@ public class Celda extends JLabel implements EntidadGrafica {
 	@Override
 	public void notificarse_cambio_posicion(){
 		//System.out.println(entidad_logica.get_pos_x()+" "+ entidad_logica.get_pos_y());
+		setBounds(entidad_logica.get_pos_x(),entidad_logica.get_pos_y(), size_label_x, size_label_y);
+	}
+	
+	@Override
+	public void notificarse_cambio_posicion_animado(){
 		mi_ventana.animar_movimiento(this);
 	}
 

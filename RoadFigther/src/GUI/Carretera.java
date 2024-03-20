@@ -59,7 +59,7 @@ public class Carretera extends Canvas {
 
     public void moveRoad(int velocidad) {
         if (roadPositionY <= 0) {
-        	roadPositionY += (velocidad / 10); // Ajusta la velocidad de movimiento
+        	roadPositionY += (velocidad / 8); // Ajusta la velocidad de movimiento
         }
         else {
         	mi_juego.notificar_fin_de_pista();
@@ -74,4 +74,5 @@ public class Carretera extends Canvas {
     public int get_limite_derecho() {
         return (WIDTH + ROAD_WIDTH) / 2 - 40;
     }
+
 }

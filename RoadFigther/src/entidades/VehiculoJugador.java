@@ -3,19 +3,13 @@ package entidades;
 public class VehiculoJugador extends Entidad{
 	
 	public int combustible;
-	public int distancia_recorrida;
 	public int puntaje;
 	
 	public VehiculoJugador(int x, String path_img) {
 		super(x, 375, path_img);
 		combustible = 100;
-		distancia_recorrida = 0;
 		velocidad = 0;
 		puntaje = 0;
-	}
-	
-	public int get_distancia() {
-		return distancia_recorrida;
 	}
 	
 	public int get_velocidad() {
@@ -32,7 +26,12 @@ public class VehiculoJugador extends Entidad{
 	
 	public void detonar() {
 		super.detonar();
-		cambiar_posicion(200);
+		cambiar_posicion_animado(200);
+	}
+	
+	public void cambiar_posicion_animado(int nueva_x) {
+		pos_x = nueva_x;
+		entidad_grafica.notificarse_cambio_posicion_animado();
 	}
 	
 	public void reivir() {
@@ -43,21 +42,23 @@ public class VehiculoJugador extends Entidad{
 	public void aumentar_velocidad(int cambio) {
 		switch(cambio) {
         	case 1: 
-        		if(velocidad < 198)
-        			velocidad += 5 * cambio; 
+        		if(velocidad <= 192) 
+        			velocidad += 6; 		//max 128 en primer cambio
         		break;
         	case 2: 
-        		if(velocidad < 400)
-        			velocidad += 5 * cambio; 
+        		if(velocidad <= 195)
+        			velocidad += 3; 		//3 para que si empezas con el 2do cambio vas mas lento
+        		else if(velocidad < 300)
+        			velocidad += 6;
+        		else if(velocidad >= 300)
+        			velocidad = 300;
         		break;
 		}
-		distancia_recorrida +=  5 * cambio;
 	}
 	
 	public void disminuir_velocidad(int decremento) {
 		if(velocidad - decremento > 0) {
 			velocidad -= decremento;
-			distancia_recorrida += decremento;
 		}
 		else
 			velocidad = 0;

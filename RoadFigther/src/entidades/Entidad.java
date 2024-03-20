@@ -53,6 +53,11 @@ public abstract class Entidad implements EntidadLogica {
 		entidad_grafica.notificarse_cambio_posicion();
 	}
 	
+	public void cambiar_posicion_animado(int nueva_y) {
+		pos_y = nueva_y;
+		entidad_grafica.notificarse_cambio_posicion_animado();
+	}
+	
 	public void detonar() {
 		velocidad = 0;
 		detonado = true;
@@ -70,4 +75,5 @@ public abstract class Entidad implements EntidadLogica {
 		imagenes_representativas[1] = path_img +"_detonado.png";
 		imagenes_representativas[2] = "/imagenes/0.png";
 	}
+
 }
