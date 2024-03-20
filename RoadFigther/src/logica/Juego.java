@@ -1,8 +1,12 @@
 package logica;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.swing.Timer;
 
 import GUI.Carretera;
 import GUI.EntidadGrafica;
@@ -22,42 +26,59 @@ public class Juego {
 	protected Carretera mi_carretera;
 	
 	protected VehiculoJugador vehiculo_jugador;
-	protected List<Entidad> entidades;
-	protected List<Entidad> entidades_a_eliminar;
+	protected List<Entidad> entidades, entidades_a_eliminar;
 	
-	protected int vidas;
-	protected int limite_izquierdo;
-	protected int limite_derecho;
+	protected int vidas, combustible;
+	protected int limite_izquierdo, limite_derecho;
+	
+	protected Timer combustible_timer;
 	
 	public Juego() {
 		mi_ventana = new Ventana(this);
 		mi_nivel = GeneradorNivel.cargar_nivel(this);
-		entidades = new LinkedList<Entidad>();
-		entidades_a_eliminar = new LinkedList<Entidad>();
+		mi_carretera = mi_nivel.get_carretera();
+		cargar_nivel();
+		
 		asociar_entidades_logicas_graficas();
 	}
 	
-	private void asociar_entidades_logicas_graficas() {
-		vidas = mi_nivel.get_vidas();
+	private void cargar_nivel() {
 		vehiculo_jugador = mi_nivel.get_vehiculo_jugador();
-		mi_carretera = mi_nivel.get_carretera();
 		entidades = mi_nivel.get_entidades();
+		entidades_a_eliminar = new LinkedList<Entidad>();
+		
+		vidas = mi_nivel.get_vidas();
+		combustible = 100;
+		
 		limite_izquierdo = mi_carretera.get_limite_izquierdo();
 		limite_derecho = mi_carretera.get_limite_derecho();
-		
+		timer_combustible();
+		combustible_timer.start();
+	}
+
+	private void asociar_entidades_logicas_graficas() {
 		mi_ventana.actualizar_vidas(vidas);
 		mi_ventana.resetear_carretera(mi_carretera);
 		
+		
 		EntidadGrafica eg;
+		eg = mi_ventana.agregar_entidad(vehiculo_jugador);
+	    vehiculo_jugador.set_entidad_grafica(eg);
 	    
 	    for(Entidad e: entidades) {
 	    	eg = mi_ventana.agregar_entidad(e);
 	        e.set_entidad_grafica(eg);
 	    }
-	    eg = mi_ventana.agregar_entidad(vehiculo_jugador);
-	    vehiculo_jugador.set_entidad_grafica(eg);
-	    
 	  }
+	
+	private void timer_combustible() {
+		mi_ventana.actualizar_combustible(combustible);
+		combustible_timer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                mi_ventana.actualizar_combustible(--combustible);
+            }
+        });
+	}
 	
 	public Entidad get_vehiculo_jugador() {
 		return vehiculo_jugador;
@@ -156,6 +177,7 @@ public class Juego {
 	
 	public void notificar_fin_de_pista() {
 		vehiculo_jugador.set_velocidad(0);
+		combustible_timer.stop();
 		mi_ventana.notificar_fin_de_pista();
 	}
 

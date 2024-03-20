@@ -92,6 +92,10 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     	vidas.setText("Vidas: " + cant);
 	}
     
+    public void actualizar_combustible(int cant) {
+    	combustible.setText("FUEL: " + cant);
+	}
+    
     private void inicializar() {
         setTitle("Road Fighter");
         setSize(650, 525);
