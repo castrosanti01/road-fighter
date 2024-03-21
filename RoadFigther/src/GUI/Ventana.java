@@ -40,11 +40,6 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         inicializar();
     }
     
-    public void resetear_carretera(Carretera c) {
-        mi_carretera = c;
-        panel_carretera.add(mi_carretera);
-	}
-    
     public EntidadGrafica agregar_entidad(EntidadLogica e) {
         Celda celda = new Celda(this, e);
         panel_principal.add(celda, 0);
@@ -83,6 +78,11 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     public void animar_aparicion(Celda c) {
     	mi_animador.animar_aparicion(c);
     }
+    
+    public void actualizar_carretera(Carretera c) {
+        mi_carretera = c;
+        panel_carretera.add(mi_carretera);
+	}
 
     public void actualizar_velocidad(int vel) {
     	velocimetro.setText(vel + " Km/h");
@@ -223,10 +223,13 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         });
     }
 
-	public void notificar_fin_de_pista() {
-		//cambiar por animador
-		bloquear_jugabilidad = true;
-		desacelerar.stop();
+	public void vaciar_ventana() {
+	    // Reinicializar el panel
+	    panel_principal.removeAll();
+	    inicializar();
+	    revalidate();
+	    repaint();
 	}
+
 
 }

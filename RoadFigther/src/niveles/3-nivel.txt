@@ -1,0 +1,12 @@
+# Archivo de configuración del Nivel 3
+Nivel: 3
+
+# Tamaño de la Carretera
+Ancho Carretera: 150
+Largo Carretera: 1000
+
+# Posicion inicial Jugador
+Posicion inicial: 200
+
+# Cantidad de Vehiculos de Ruta
+Cantidad de Vehiculos de Ruta: 8

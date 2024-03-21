@@ -9,7 +9,6 @@ import entidades.VehiculoJugador;
 public class Nivel {
 
 	protected int nivel;
-	protected int vidas;
 	protected Carretera carretera;
 	protected VehiculoJugador jugador;
 	protected List<Entidad> entidades;
@@ -17,7 +16,6 @@ public class Nivel {
 	public static class Builder {
 
 		private int nivel;
-	    private int vidas;
 	    private Carretera carretera;
 	    private VehiculoJugador jugador;
 	    private List<Entidad> entidades;
@@ -27,11 +25,6 @@ public class Nivel {
 	    	return this;
 	    }
 	
-	    public Nivel.Builder vidas(int vidas) {
-	    	this.vidas = vidas;
-	    	return this;
-	    }
-	    
 	    public Nivel.Builder carretera(Carretera carretera) {
 	    	this.carretera = carretera;
 	    	return this;
@@ -55,7 +48,6 @@ public class Nivel {
 	
 	public Nivel(Builder builder) {
 	    this.nivel = builder.nivel;
-	    this.vidas = builder.vidas;
 	    this.carretera = builder.carretera;
 	    this.jugador = builder.jugador;
 	    this.entidades = builder.entidades;
@@ -63,10 +55,6 @@ public class Nivel {
 	
 	public int get_numero_nivel() {
 	    return nivel;
-	}
-	
-	public int get_vidas() {
-	    return vidas;
 	}
 	
 	public Carretera get_carretera() {

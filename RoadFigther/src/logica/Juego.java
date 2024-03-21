@@ -28,39 +28,53 @@ public class Juego {
 	protected VehiculoJugador vehiculo_jugador;
 	protected List<Entidad> entidades, entidades_a_eliminar;
 	
-	protected int vidas, combustible;
+	protected int vidas, combustible, nivel;
 	protected int limite_izquierdo, limite_derecho;
 	
 	protected Timer combustible_timer;
 	
 	public Juego() {
 		mi_ventana = new Ventana(this);
-		mi_nivel = GeneradorNivel.cargar_nivel(this);
-		mi_carretera = mi_nivel.get_carretera();
-		cargar_nivel();
-		
-		asociar_entidades_logicas_graficas();
+		vidas = 3;
+		nivel = 1;
+		cargar_nivel(nivel);
 	}
 	
-	private void cargar_nivel() {
+	private void cargar_nivel(int n) {
+		mi_nivel = GeneradorNivel.cargar_nivel(getClass().getResourceAsStream("/niveles/"+n+"-nivel.txt"), this);
+		mi_carretera = mi_nivel.get_carretera();
 		vehiculo_jugador = mi_nivel.get_vehiculo_jugador();
 		entidades = mi_nivel.get_entidades();
 		entidades_a_eliminar = new LinkedList<Entidad>();
 		
-		vidas = mi_nivel.get_vidas();
-		combustible = 100;
-		
 		limite_izquierdo = mi_carretera.get_limite_izquierdo();
 		limite_derecho = mi_carretera.get_limite_derecho();
+		
+		combustible = 100;
 		timer_combustible();
 		combustible_timer.start();
+		
+		mi_ventana.actualizar_vidas(vidas);
+		mi_ventana.actualizar_carretera(mi_carretera);
+		asociar_entidades_logicas_graficas();
+	}
+	
+	private void timer_combustible() {
+		mi_ventana.actualizar_combustible(combustible);
+		combustible_timer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	combustible--;
+            	if(combustible < 0) {
+            		perder();
+            		combustible_timer.stop();
+            	}
+            	else
+            		mi_ventana.actualizar_combustible(combustible);
+            }
+        });
 	}
 
 	private void asociar_entidades_logicas_graficas() {
-		mi_ventana.actualizar_vidas(vidas);
-		mi_ventana.resetear_carretera(mi_carretera);
-		
-		
 		EntidadGrafica eg;
 		eg = mi_ventana.agregar_entidad(vehiculo_jugador);
 	    vehiculo_jugador.set_entidad_grafica(eg);
@@ -69,22 +83,31 @@ public class Juego {
 	    	eg = mi_ventana.agregar_entidad(e);
 	        e.set_entidad_grafica(eg);
 	    }
-	  }
+	}
 	
-	private void timer_combustible() {
-		mi_ventana.actualizar_combustible(combustible);
-		combustible_timer = new Timer(1000, new ActionListener() {
+	private void perder() {
+		System.out.println("fuiste");
+		combustible_timer.stop();
+		mi_ventana.actualizar_vidas(0);
+		mi_ventana.notificarse_animacion_en_progreso();
+        Timer timer = new Timer(2000, new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                mi_ventana.actualizar_combustible(--combustible);
+            	mi_ventana.vaciar_ventana();
+            	vidas = 3;
+            	cargar_nivel(1);
+            	mi_ventana.notificarse_animacion_finalizada();
             }
         });
+        timer.setRepeats(false); 
+        timer.start();
 	}
 	
 	public Entidad get_vehiculo_jugador() {
 		return vehiculo_jugador;
 	}
 	
-	public List<Entidad> get_entidades(){
+	public List<Entidad> get_entidades() {
 		return entidades;
 	}
 	
@@ -117,10 +140,9 @@ public class Juego {
 			if(vehiculo_jugador.get_velocidad() >= 150){
 				if(vidas == 1) {
 					--vidas;
-					System.out.println("loser");
+					perder();
 				}
 				else {
-					
 					for(Entidad e: entidades) 
 						e.cambiar_posicion_animado(e.get_pos_y() - 600);
 					vehiculo_jugador.detonar();
@@ -161,7 +183,7 @@ public class Juego {
 		for(Entidad e: entidades) {
 			e.cambiar_posicion(e.get_pos_y() - 400/50);
 			if(vehiculo_jugador.get_velocidad() == 0) {
-				if(e.get_pos_y() > 0) {
+				if(e.get_pos_y() >= 0) {
 					e.cambiar_posicion_animado(-90);
 					entidades_a_eliminar.add(e);
 				}
@@ -176,9 +198,36 @@ public class Juego {
 	}
 	
 	public void notificar_fin_de_pista() {
-		vehiculo_jugador.set_velocidad(0);
-		combustible_timer.stop();
-		mi_ventana.notificar_fin_de_pista();
+		if(nivel > 2) {
+			System.out.println("ganaste wacho");
+			vehiculo_jugador.set_velocidad(0);
+	        combustible_timer.stop();
+	        mi_ventana.notificarse_animacion_en_progreso();
+	        Timer timer = new Timer(2000, new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	            	mi_ventana.vaciar_ventana();
+	            	//mi_ventana.notificarse_animacion_finalizada();
+	            }
+	        });
+	        timer.setRepeats(false); 
+	        timer.start();
+		}
+		else {
+			vehiculo_jugador.set_velocidad(0);
+	        combustible_timer.stop();
+	        mi_ventana.notificarse_animacion_en_progreso();
+	        Timer timer = new Timer(2000, new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	            	mi_ventana.vaciar_ventana();
+	            	mi_ventana.notificarse_animacion_finalizada();
+	            	cargar_nivel(++nivel);
+	            }
+	        });
+	        timer.setRepeats(false); 
+	        timer.start();
+		}
 	}
 
 	public static void main(String[] args) {
