@@ -13,7 +13,7 @@ public class AnimadorAparicion extends Thread implements Animador {
 		this.manager = manager;
 		this.celda_animada = celda;
 		this.delay = delay;
-		this.prioridad = PrioridadAnimaciones.PRIORIDAD_REVIVIR;
+		this.prioridad = PrioridadAnimaciones.PRIORIDAD_SIN_PRIORIDAD;
 	}
 	
 	public Celda get_celda_asociada() {
@@ -29,8 +29,14 @@ public class AnimadorAparicion extends Thread implements Animador {
 	}
 	
 	public void run() {
-		// '0' estado normal, '1' detonado, '2' imagen vacia
-		celda_animada.cambiar_imagen(celda_animada.get_entidad_logica().get_imagen_representativa(0));
+		
+		try {
+			sleep(delay);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		celda_animada.cambiar_imagen(celda_animada.get_entidad_logica().get_imagen_representativa());
 		manager.notificarse_finalizacion_animador(this);
 	}
 

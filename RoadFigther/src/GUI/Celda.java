@@ -26,7 +26,7 @@ public class Celda extends JLabel implements EntidadGrafica {
 		size_label_x =  e.get_size_label_x(); 
 		size_label_y = e.get_size_label_y();
 		setBounds(e.get_pos_x()-30, e.get_pos_y(), size_label_x, size_label_y);
-		cambiar_imagen(e.get_imagen_representativa(0));	 
+		cambiar_imagen(e.get_imagen_representativa());	 
 	}
 	
 	public EntidadLogica get_entidad_logica() {
@@ -42,6 +42,11 @@ public class Celda extends JLabel implements EntidadGrafica {
 	}
 	
 	@Override
+	public void notificarse_cambio_estado() {
+		cambiar_imagen(entidad_logica.get_imagen_representativa());
+	}
+	
+	@Override
 	public void notificarse_cambio_posicion(){
 		//System.out.println(entidad_logica.get_pos_x()+" "+ entidad_logica.get_pos_y());
 		setBounds(entidad_logica.get_pos_x()-30,entidad_logica.get_pos_y(), size_label_x, size_label_y);
@@ -53,11 +58,6 @@ public class Celda extends JLabel implements EntidadGrafica {
 	}
 
 	@Override
-	public void notificarse_detonar() {
-		mi_ventana.animar_detonacion(this);
-	}
-	
-	@Override
 	public void notificarse_revivir() {
 		mi_ventana.animar_aparicion(this);
 	}
@@ -65,7 +65,6 @@ public class Celda extends JLabel implements EntidadGrafica {
 	@Override
 	public void notificarse_descarrilar(int angulo) {
 		mi_ventana.animar_descarrilar(this, angulo);
-		//rotar(angulo);
 	}
 	
 	@Override

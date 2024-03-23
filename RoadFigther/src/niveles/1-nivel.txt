@@ -9,4 +9,4 @@ Largo Carretera: 15000
 Posicion inicial: 200
 
 # Cantidad de Vehiculos de Ruta
-Cantidad de Vehiculos de Ruta: 8
+Cantidad de Vehiculos de Ruta: 20

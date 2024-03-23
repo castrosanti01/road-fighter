@@ -30,12 +30,6 @@ public class CentralAnimaciones {
 		agregar_animador_y_lanzar_pendientes(animador);
 	}
 	
-	public void animar_detonacion(Celda celda) {
-		ventana.notificarse_animacion_en_progreso();
-		Animador animador = new AnimadorDetonacion(this, celda, 1500);
-		agregar_animador_y_lanzar_pendientes(animador);
-	}
-	
 	public void animar_aparicion(Celda celda) {
 		ventana.notificarse_animacion_en_progreso();
 		Animador animador = new AnimadorAparicion(this, celda, 1500);
@@ -44,7 +38,7 @@ public class CentralAnimaciones {
 	
 	public void animar_descarrilar(Celda celda, int angulo) {
 		ventana.notificarse_animacion_en_progreso();
-		Animador animador = new AnimadorDescarrilar(this, celda, 150, angulo);
+		Animador animador = new AnimadorDescarrilar(this, celda, 50, angulo);
 		agregar_animador_y_lanzar_pendientes(animador);
 	}
 	

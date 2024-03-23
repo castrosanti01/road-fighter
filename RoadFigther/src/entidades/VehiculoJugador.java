@@ -7,9 +7,10 @@ import javax.swing.Timer;
 
 public class VehiculoJugador extends Entidad{
 	
-	public int combustible;
-	public int puntaje;
-	public boolean descarilado;
+	protected int velocidad;
+	protected int combustible;
+	protected int puntaje;
+	protected boolean descarilado_izquierdo, descarilado_derecho;
 	
 	public VehiculoJugador(int x, String path_img) {
 		super(x, 375, path_img);
@@ -30,25 +31,37 @@ public class VehiculoJugador extends Entidad{
 		velocidad = v;
 	}
 	
+	public void carrilar_izquierdo() {
+		descarilado_izquierdo = false;
+	}
+	
+	public void carrilar_derecho() {
+		descarilado_derecho = false;
+	}
+	
 	public void descarrilar(int angulo) {
 		entidad_grafica.rotar(angulo);
-		descarilado = true;
+		if(angulo < 0)
+			descarilado_izquierdo = true;
+		else
+			descarilado_derecho = true;
+		
 		Timer timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	if(descarilado)
+            	if(descarilado_izquierdo | descarilado_derecho)
             		entidad_grafica.notificarse_descarrilar(angulo);
+            	else
+            		entidad_grafica.rotar(-angulo);
             }
         });
         timer.setRepeats(false); 
         timer.start();
-        
-        //si antes de llegar a los 2 segundos toco la tecla <-, entonces descarilado = false;
 	}
 	
 	public void detonar() {
 		super.detonar();
-		cambiar_posicion_animado(200);
+		velocidad = 0;
 	}
 	
 	public void cambiar_posicion_animado(int nueva_x) {
@@ -59,6 +72,7 @@ public class VehiculoJugador extends Entidad{
 	public void reivir() {
 		detonado = false;
 		entidad_grafica.notificarse_revivir();
+		cambiar_posicion_animado(200);
 	}
 	
 	public void aumentar_velocidad(int cambio) {

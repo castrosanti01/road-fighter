@@ -115,10 +115,12 @@ public class Juego {
 		switch (d) {
 			case Juego.IZQUIERDA: {
 				cambiar_posicion(vehiculo_jugador.get_pos_x() - 10);
+				vehiculo_jugador.carrilar_derecho();
 				break;
 			}
 			case Juego.DERECHA: {
 				cambiar_posicion(vehiculo_jugador.get_pos_x() + 10);
+				vehiculo_jugador.carrilar_izquierdo();
 				break;
 			}
 			case Juego.ZETA: {
@@ -132,47 +134,55 @@ public class Juego {
 		}
 	}
 	
-	private void cambiar_posicion(int nueva_pos) {
-		if(en_rango(nueva_pos))
-			vehiculo_jugador.cambiar_posicion_x(nueva_pos);
-		//Explotar
-		if(nueva_pos == limite_izquierdo | nueva_pos == limite_derecho) {
-			if(vehiculo_jugador.get_velocidad() >= 150){
-				if(vidas == 1) {
-					--vidas;
-					perder();
-				}
-				else {
-					for(Entidad e: entidades) 
-						e.cambiar_posicion_animado(e.get_pos_y() - 600);
-					vehiculo_jugador.detonar();
-					vehiculo_jugador.reivir();
-					mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
-					mi_ventana.actualizar_vidas(--vidas);
-				}
-			}
+	private void cambiar_posicion(int nueva_x) {
+		if(en_rango(nueva_x))
+			vehiculo_jugador.cambiar_posicion(nueva_x, vehiculo_jugador.get_pos_y());
+		if(nueva_x == limite_izquierdo | nueva_x == limite_derecho) {
+			if(vehiculo_jugador.get_velocidad() >= 150)
+				explotar();
 			else {
-				if(nueva_pos == limite_izquierdo) {
+				if(nueva_x == limite_izquierdo) 
 					cambiar_posicion(vehiculo_jugador.get_pos_x() + 20);
-					System.out.println(limite_izquierdo +" "+ vehiculo_jugador.get_pos_x());
-				}
-				if(nueva_pos == limite_derecho)
+				if(nueva_x == limite_derecho)
 					cambiar_posicion(vehiculo_jugador.get_pos_x() - 20);
 			}
+		}
+	}
+	
+	private void deslizar_posicion(Entidad e, int nueva_x) {
+		Entidad entidad = e;
+		entidad.cambiar_posicion_animado(nueva_x, e.get_pos_y());
+		if(nueva_x <= limite_izquierdo | nueva_x >= limite_derecho) {
+			entidad.detonar();
+			//entidades.remove(entidad);
+		}
+	}
+
+	private void explotar() {
+		if(vidas == 1) {
+			--vidas;
+			perder();
+		}
+		else {
+			for(Entidad e: entidades) 
+				e.cambiar_posicion_animado(e.get_pos_x(), e.get_pos_y() - 600);
+			vehiculo_jugador.detonar();
+			vehiculo_jugador.reivir();
+			mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
+			mi_ventana.actualizar_vidas(--vidas);
 		}
 	}
 
 	private void verificar_colision() {
 	    for(Entidad e : entidades) {
 	        if(vehiculo_jugador.get_bounds().intersects(e.get_bounds())) {
-	            double diferencia = (vehiculo_jugador.get_pos_x()+vehiculo_jugador.get_size_label_x()/2) 
-	            					- (e.get_pos_x()+e.get_size_label_x()/2);
+	            double diferencia = (vehiculo_jugador.get_pos_x()+vehiculo_jugador.get_size_label_x()/2) - (e.get_pos_x()+e.get_size_label_x()/2);
 	            if(diferencia > 0) {
-	                e.cambiar_posicion_x(e.get_pos_x() - 25);
+	                deslizar_posicion(e, e.get_pos_x() - 35);
 	                vehiculo_jugador.descarrilar(45);
 	            }
 	            else { 
-	                e.cambiar_posicion_x(e.get_pos_x() + 25);
+	            	deslizar_posicion(e, e.get_pos_x() + 35);
 	                vehiculo_jugador.descarrilar(-45);
 	            }
 	        }
@@ -185,16 +195,16 @@ public class Juego {
 		mi_carretera.moveRoad(vehiculo_jugador.get_velocidad());
 		mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
 		verificar_colision();
-		for(Entidad e: entidades) {
-			if(e.get_pos_y() > 500) {
-				//500 sale de la pantalla
-				entidades_a_eliminar.add(e);
+		if(!entidades.isEmpty()) {
+			for(Entidad e: entidades) {
+				if(e.get_pos_y() > 500)
+					entidades_a_eliminar.add(e);
+				else
+					e.cambiar_posicion(e.get_pos_x(), e.get_pos_y() + vehiculo_jugador.get_velocidad()/25);	//mas alto, mas rapido son
 			}
-			e.cambiar_posicion_y(e.get_pos_y() + vehiculo_jugador.get_velocidad()/25);	//mas alto, mas rapido son
+			for(Entidad e: entidades_a_eliminar)
+				entidades.remove(e);
 		}
-		for(Entidad e: entidades_a_eliminar)
-			entidades.remove(e);
-		
 	}
 	
 	public void desacelerar() {
@@ -202,10 +212,10 @@ public class Juego {
 		mi_carretera.moveRoad(vehiculo_jugador.get_velocidad());
 		mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
 		for(Entidad e: entidades) {
-			e.cambiar_posicion_y(e.get_pos_y() - 400/50);
+			e.cambiar_posicion(e.get_pos_x(), e.get_pos_y() - 400/50);
 			if(vehiculo_jugador.get_velocidad() == 0) {
 				if(e.get_pos_y() >= 0) {
-					e.cambiar_posicion_animado(-90);
+					e.cambiar_posicion_animado(e.get_pos_x(), -90);
 					entidades_a_eliminar.add(e);
 				}
 			}

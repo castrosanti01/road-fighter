@@ -70,11 +70,6 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     }
     
     @Override
-    public void animar_detonacion(Celda c) {
-    	mi_animador.animar_detonacion(c);
-    }
-    
-    @Override
     public void animar_aparicion(Celda c) {
     	mi_animador.animar_aparicion(c);
     }

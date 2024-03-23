@@ -14,7 +14,7 @@ public class AnimadorDescarrilar extends Thread implements Animador {
         this.manager = manager;
         this.celda_animada = celda;
         this.delay = delay;
-        this.prioridad = PrioridadAnimaciones.PRIORIDAD_ROTACION;
+        this.prioridad = PrioridadAnimaciones.PRIORIDAD_SIN_PRIORIDAD;
         this.angulo = angulo;
     }
 
@@ -32,7 +32,7 @@ public class AnimadorDescarrilar extends Thread implements Animador {
 
     public void run() {
         int i = 0;
-        while (i != 7) {
+        while (i != 15) {
             try {
             	i++;
                 celda_animada.rotar(angulo);
