@@ -1,9 +1,15 @@
 package entidades;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
+
 public class VehiculoJugador extends Entidad{
 	
 	public int combustible;
 	public int puntaje;
+	public boolean descarilado;
 	
 	public VehiculoJugador(int x, String path_img) {
 		super(x, 375, path_img);
@@ -22,6 +28,22 @@ public class VehiculoJugador extends Entidad{
 	
 	public void set_velocidad(int v) {
 		velocidad = v;
+	}
+	
+	public void descarrilar(int angulo) {
+		entidad_grafica.rotar(angulo);
+		descarilado = true;
+		Timer timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	if(descarilado)
+            		entidad_grafica.notificarse_descarrilar(angulo);
+            }
+        });
+        timer.setRepeats(false); 
+        timer.start();
+        
+        //si antes de llegar a los 2 segundos toco la tecla <-, entonces descarilado = false;
 	}
 	
 	public void detonar() {

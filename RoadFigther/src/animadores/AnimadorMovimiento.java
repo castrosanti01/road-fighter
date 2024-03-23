@@ -21,7 +21,7 @@ public class AnimadorMovimiento extends Thread implements Animador {
 		this.delay = delay;
 		prioridad = PrioridadAnimaciones.PRIORIDAD_MOVIMIENTO; 
 				
-		pos_x_destino = celda.get_entidad_logica().get_pos_x();
+		pos_x_destino = celda.get_entidad_logica().get_pos_x()-30;
 		pos_y_destino = celda.get_entidad_logica().get_pos_y();
 		
 	}
@@ -59,7 +59,7 @@ public class AnimadorMovimiento extends Thread implements Animador {
 			pos_x_actual += paso_en_x * step;
 			pos_y_actual += paso_en_y * step;
 			
-			celda_animada.setBounds(pos_x_actual, pos_y_actual, size_label_x, size_label_y);
+			celda_animada.setBounds(pos_x_actual-30, pos_y_actual, size_label_x, size_label_y);
 			
 			try {
 				sleep(delay);

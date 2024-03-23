@@ -10,9 +10,4 @@ public class VehiculoRuta extends Entidad{
 		return detonado;
 	}
 	
-	public void cambiar_posicion(int nueva_y) {
-		pos_y = nueva_y;
-		entidad_grafica.notificarse_cambio_posicion();
-	}
-	
 }

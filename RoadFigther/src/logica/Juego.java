@@ -134,7 +134,7 @@ public class Juego {
 	
 	private void cambiar_posicion(int nueva_pos) {
 		if(en_rango(nueva_pos))
-			vehiculo_jugador.cambiar_posicion(nueva_pos);
+			vehiculo_jugador.cambiar_posicion_x(nueva_pos);
 		//Explotar
 		if(nueva_pos == limite_izquierdo | nueva_pos == limite_derecho) {
 			if(vehiculo_jugador.get_velocidad() >= 150){
@@ -152,24 +152,45 @@ public class Juego {
 				}
 			}
 			else {
-				if(nueva_pos == limite_izquierdo)
+				if(nueva_pos == limite_izquierdo) {
 					cambiar_posicion(vehiculo_jugador.get_pos_x() + 20);
+					System.out.println(limite_izquierdo +" "+ vehiculo_jugador.get_pos_x());
+				}
 				if(nueva_pos == limite_derecho)
 					cambiar_posicion(vehiculo_jugador.get_pos_x() - 20);
 			}
 		}
 	}
 
+	private void verificar_colision() {
+	    for(Entidad e : entidades) {
+	        if(vehiculo_jugador.get_bounds().intersects(e.get_bounds())) {
+	            double diferencia = (vehiculo_jugador.get_pos_x()+vehiculo_jugador.get_size_label_x()/2) 
+	            					- (e.get_pos_x()+e.get_size_label_x()/2);
+	            if(diferencia > 0) {
+	                e.cambiar_posicion_x(e.get_pos_x() - 25);
+	                vehiculo_jugador.descarrilar(45);
+	            }
+	            else { 
+	                e.cambiar_posicion_x(e.get_pos_x() + 25);
+	                vehiculo_jugador.descarrilar(-45);
+	            }
+	        }
+	    }
+	}
+
+
 	private void avanzar_carretera(int cambio) {
 		vehiculo_jugador.aumentar_velocidad(cambio);
 		mi_carretera.moveRoad(vehiculo_jugador.get_velocidad());
 		mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
+		verificar_colision();
 		for(Entidad e: entidades) {
 			if(e.get_pos_y() > 500) {
 				//500 sale de la pantalla
 				entidades_a_eliminar.add(e);
 			}
-			e.cambiar_posicion(e.get_pos_y() + vehiculo_jugador.get_velocidad()/25);	//mas alto, mas rapido son
+			e.cambiar_posicion_y(e.get_pos_y() + vehiculo_jugador.get_velocidad()/25);	//mas alto, mas rapido son
 		}
 		for(Entidad e: entidades_a_eliminar)
 			entidades.remove(e);
@@ -181,7 +202,7 @@ public class Juego {
 		mi_carretera.moveRoad(vehiculo_jugador.get_velocidad());
 		mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
 		for(Entidad e: entidades) {
-			e.cambiar_posicion(e.get_pos_y() - 400/50);
+			e.cambiar_posicion_y(e.get_pos_y() - 400/50);
 			if(vehiculo_jugador.get_velocidad() == 0) {
 				if(e.get_pos_y() >= 0) {
 					e.cambiar_posicion_animado(-90);
@@ -193,41 +214,26 @@ public class Juego {
 			entidades.remove(e);
 	}
 	
-	private boolean en_rango(int nueva_pos) {
-		return nueva_pos >= limite_izquierdo && nueva_pos <= limite_derecho;
+	public void notificar_fin_de_pista() {
+		vehiculo_jugador.set_velocidad(0);
+        combustible_timer.stop();
+        mi_ventana.notificarse_animacion_en_progreso();
+        Timer timer = new Timer(2000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	mi_ventana.vaciar_ventana();
+            	if(nivel <= 2) {
+            		mi_ventana.notificarse_animacion_finalizada();
+	            	cargar_nivel(++nivel);
+            	}
+            }
+        });
+        timer.setRepeats(false); 
+        timer.start();	
 	}
 	
-	public void notificar_fin_de_pista() {
-		if(nivel > 2) {
-			System.out.println("ganaste wacho");
-			vehiculo_jugador.set_velocidad(0);
-	        combustible_timer.stop();
-	        mi_ventana.notificarse_animacion_en_progreso();
-	        Timer timer = new Timer(2000, new ActionListener() {
-	            @Override
-	            public void actionPerformed(ActionEvent e) {
-	            	mi_ventana.vaciar_ventana();
-	            	//mi_ventana.notificarse_animacion_finalizada();
-	            }
-	        });
-	        timer.setRepeats(false); 
-	        timer.start();
-		}
-		else {
-			vehiculo_jugador.set_velocidad(0);
-	        combustible_timer.stop();
-	        mi_ventana.notificarse_animacion_en_progreso();
-	        Timer timer = new Timer(2000, new ActionListener() {
-	            @Override
-	            public void actionPerformed(ActionEvent e) {
-	            	mi_ventana.vaciar_ventana();
-	            	mi_ventana.notificarse_animacion_finalizada();
-	            	cargar_nivel(++nivel);
-	            }
-	        });
-	        timer.setRepeats(false); 
-	        timer.start();
-		}
+	private boolean en_rango(int nueva_pos) {
+		return nueva_pos >= limite_izquierdo && nueva_pos <= limite_derecho;
 	}
 
 	public static void main(String[] args) {

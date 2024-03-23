@@ -9,6 +9,10 @@ public interface EntidadGrafica {
 	public void notificarse_detonar();
 
 	public void notificarse_revivir();
+
+	public void notificarse_descarrilar(int angulo);
+	
+	public void rotar(int angulo);
 	
 
 }

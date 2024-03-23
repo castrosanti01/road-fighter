@@ -1,15 +1,15 @@
 package GUI;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import javax.swing.JLabel;
 
 import logica.Juego;
 
 @SuppressWarnings("serial")
-public class Carretera extends Canvas {
-    
+public class Carretera extends JLabel {
+
     private static final Color LINE_COLOR = Color.WHITE;
     private static final Color FINISH_LINE_COLOR = Color.RED;
     private static final Font FONT = new Font("Arial", Font.BOLD, 24);
@@ -29,9 +29,10 @@ public class Carretera extends Canvas {
     }
 
     @Override
-    public void paint(Graphics g) {
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
-    	// Dibujar líneas en la carretera
+        // Dibujar líneas en la carretera
         g.setColor(LINE_COLOR);
         int lineX = (WIDTH - ROAD_WIDTH) / 2 + ROAD_WIDTH / 2;
         for (int i = 0; i < HEIGHT / 100; i++) {
@@ -39,9 +40,9 @@ public class Carretera extends Canvas {
             g.fillRect(lineX, roadPositionY + i * 100 + 100, 5, 50);
         }
 
-        // Dibujar líneas blancas en los bordes de la carretera (como no se mueve el tamaño 500 es el del largo de la pantalla)
-        g.fillRect((WIDTH - ROAD_WIDTH) / 2 - 10, 0, 10, 500);
-        g.fillRect((WIDTH + ROAD_WIDTH) / 2, 0, 10, 500);
+        // Dibujar líneas blancas en los bordes de la carretera
+        g.fillRect((WIDTH - ROAD_WIDTH) / 2 - 10, 0, 10, HEIGHT);
+        g.fillRect((WIDTH + ROAD_WIDTH) / 2, 0, 10, HEIGHT);
         
         // Dibujar línea de salida
         g.setColor(LINE_COLOR);
@@ -72,7 +73,7 @@ public class Carretera extends Canvas {
     }
     
     public int get_limite_derecho() {
-        return (WIDTH + ROAD_WIDTH) / 2 - 40;
+        return (WIDTH + ROAD_WIDTH) / 2 - 20;
     }
 
 }

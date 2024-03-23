@@ -1,5 +1,7 @@
 package entidades;
 
+import java.awt.Rectangle;
+
 import GUI.EntidadGrafica;
 import GUI.Ventana;
 import logica.EntidadLogica;
@@ -11,7 +13,7 @@ public abstract class Entidad implements EntidadLogica {
 	protected int velocidad;
 	
 	protected int size_label_x = Ventana.size_label_x;
-	protected int size_label_y = size_label_x * 2;
+	protected int size_label_y = size_label_x;
 	
 	protected boolean detonado;
 	
@@ -44,12 +46,21 @@ public abstract class Entidad implements EntidadLogica {
 		return size_label_y;
 	}
 	
+	public Rectangle get_bounds() {
+		return new Rectangle(pos_x+40, pos_y, size_label_x-40, size_label_y);
+	}
+	
 	public void set_entidad_grafica(EntidadGrafica e) {
 		entidad_grafica = e;
 	}
 	
-	public void cambiar_posicion(int nueva_x) {
+	public void cambiar_posicion_x(int nueva_x) {
 		pos_x = nueva_x;
+		entidad_grafica.notificarse_cambio_posicion();
+	}
+	
+	public void cambiar_posicion_y(int nueva_y) {
+		pos_y = nueva_y;
 		entidad_grafica.notificarse_cambio_posicion();
 	}
 	

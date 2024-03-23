@@ -2,6 +2,7 @@ package animadores;
 
 public class PrioridadAnimaciones {
 	
+	public static int PRIORIDAD_ROTACION = 1014;
 	public static int PRIORIDAD_DETONACION = 1015;
 	public static int PRIORIDAD_MOVIMIENTO = 1015;
 	public static int PRIORIDAD_REVIVIR = 1016;

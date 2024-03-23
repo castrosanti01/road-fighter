@@ -28,7 +28,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     
     protected JLabel velocimetro, combustible, puntaje, vidas;
 
-    public static final int size_label_x = 40;
+    public static final int size_label_x = 80;
     
 
     public Ventana(Juego j) {
@@ -78,6 +78,10 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     public void animar_aparicion(Celda c) {
     	mi_animador.animar_aparicion(c);
     }
+    
+    public void animar_descarrilar(Celda c, int angulo) {
+    	mi_animador.animar_descarrilar(c, angulo);
+	}
     
     public void actualizar_carretera(Carretera c) {
         mi_carretera = c;
@@ -230,6 +234,5 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 	    revalidate();
 	    repaint();
 	}
-
 
 }
