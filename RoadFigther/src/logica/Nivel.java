@@ -3,7 +3,7 @@ package logica;
 import java.util.List;
 
 import GUI.Carretera;
-import entidades.Entidad;
+import entidades.Vehiculo;
 import entidades.VehiculoJugador;
 
 public class Nivel {
@@ -11,14 +11,14 @@ public class Nivel {
 	protected int nivel;
 	protected Carretera carretera;
 	protected VehiculoJugador jugador;
-	protected List<Entidad> entidades;
+	protected List<Vehiculo> entidades;
 
 	public static class Builder {
 
 		private int nivel;
 	    private Carretera carretera;
 	    private VehiculoJugador jugador;
-	    private List<Entidad> entidades;
+	    private List<Vehiculo> entidades;
     
 	    public Nivel.Builder nivelActual(int nivel_nro) {
 	    	this.nivel = nivel_nro;
@@ -35,7 +35,7 @@ public class Nivel {
 	    	return this;
 	    }
 	    
-	    public Nivel.Builder entidades(List<Entidad> entidades) {
+	    public Nivel.Builder entidades(List<Vehiculo> entidades) {
 	    	this.entidades = entidades;
 	    	return this;
 	    }
@@ -65,7 +65,7 @@ public class Nivel {
 	    return jugador;
 	}
 	
-	public List<Entidad> get_entidades() {
+	public List<Vehiculo> get_entidades() {
 	    return entidades;
 	}
 	

@@ -1,5 +1,10 @@
 package animadores;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
+
 import GUI.Celda;
 
 public class AnimadorDescarrilar extends Thread implements Animador {
@@ -7,14 +12,14 @@ public class AnimadorDescarrilar extends Thread implements Animador {
     protected CentralAnimaciones manager;
     protected Celda celda_animada;
     protected int delay;
-    protected int prioridad;
     protected int angulo;
+	private Timer timer;
+	private int i;
 
     public AnimadorDescarrilar(CentralAnimaciones manager, Celda celda, int delay, int angulo) {
         this.manager = manager;
         this.celda_animada = celda;
         this.delay = delay;
-        this.prioridad = PrioridadAnimaciones.PRIORIDAD_SIN_PRIORIDAD;
         this.angulo = angulo;
     }
 
@@ -22,26 +27,27 @@ public class AnimadorDescarrilar extends Thread implements Animador {
         return celda_animada;
     }
 
-    public int get_prioridad() {
-        return prioridad;
-    }
-
     public void comenzar_animacion() {
         this.start();
     }
 
     public void run() {
-        int i = 0;
-        while (i != 15) {
-            try {
+    	i = 0;
+    	final AnimadorDescarrilar esteAnimador = this;
+    	timer = new Timer(delay, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	celda_animada.rotar(angulo);
+            	if(i == 30) {
+            		timer.stop();
+            		manager.notificarse_finalizacion_animador(esteAnimador);
+            	}
             	i++;
-                celda_animada.rotar(angulo);
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
-        }
-        manager.notificarse_finalizacion_animador(this);
+        });
+    	
+    	timer.start();
+    	
     }
     
 }

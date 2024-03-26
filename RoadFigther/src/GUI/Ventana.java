@@ -63,6 +63,18 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 			bloquear_jugabilidad = false;
 		}
 	}
+	
+	@Override
+	public void bloquear_teclado() {
+		synchronized(this){
+			bloquear_jugabilidad = true;
+			isPressingZ = false;
+			isPressingX = false;
+			zTimer.stop();
+			xTimer.stop();
+			desacelerar.start();
+		}
+	}
 
     @Override
     public void animar_movimiento(Celda c) {
@@ -74,6 +86,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     	mi_animador.animar_aparicion(c);
     }
     
+    @Override
     public void animar_descarrilar(Celda c, int angulo) {
     	mi_animador.animar_descarrilar(c, angulo);
 	}

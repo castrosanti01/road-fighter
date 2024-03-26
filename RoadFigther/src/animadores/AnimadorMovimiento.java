@@ -9,7 +9,6 @@ public class AnimadorMovimiento extends Thread implements Animador {
 	
 	protected int step;
 	protected int delay;
-	protected int prioridad;
 	
 	protected int pos_x_destino;
 	protected int pos_y_destino;
@@ -19,7 +18,6 @@ public class AnimadorMovimiento extends Thread implements Animador {
 		this.celda_animada = celda;
 		this.step = step;
 		this.delay = delay;
-		prioridad = PrioridadAnimaciones.PRIORIDAD_SIN_PRIORIDAD; 
 				
 		pos_x_destino = celda.get_entidad_logica().get_pos_x()-30;
 		pos_y_destino = celda.get_entidad_logica().get_pos_y();
@@ -28,10 +26,6 @@ public class AnimadorMovimiento extends Thread implements Animador {
 	
 	public Celda get_celda_asociada() {
 		return celda_animada;
-	}
-	
-	public int get_prioridad() {
-		return prioridad;
 	}
 	
 	public void comenzar_animacion() {

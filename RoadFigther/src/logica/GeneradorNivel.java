@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import GUI.Carretera;
-import entidades.Entidad;
+import entidades.Vehiculo;
 import entidades.VehiculoJugador;
 import entidades.VehiculoRuta;
 
@@ -65,10 +65,10 @@ public class GeneradorNivel {
 		}
 	    
 		Carretera carretera = new Carretera(ancho_carretera, largo_carretera, juego);
-		VehiculoJugador jugador = new VehiculoJugador(posicion_inicial, "/imagenes/vehiculo_jugador");
+		VehiculoJugador jugador = new VehiculoJugador(posicion_inicial, juego,"/imagenes/vehiculo_jugador");
 		VehiculoRuta vehiculo_ruta;
 		
-		List<Entidad> entidades = new LinkedList<Entidad>();
+		List<Vehiculo> entidades = new LinkedList<Vehiculo>();
 		for(int i = 1; i <= cantidad_vehiculos_ruta; i++) {
 			int numeroAleatorio = random.nextInt(carretera.get_limite_derecho()-carretera.get_limite_izquierdo()) + carretera.get_limite_izquierdo();
 			vehiculo_ruta = new VehiculoRuta(numeroAleatorio, -250 * i, "/imagenes/vehiculo_ruta");

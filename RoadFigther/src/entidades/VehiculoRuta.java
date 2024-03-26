@@ -1,13 +1,12 @@
 package entidades;
 
-public class VehiculoRuta extends Entidad{
+public class VehiculoRuta extends Vehiculo{
 	
 	public VehiculoRuta(int x, int y, String path_img) {
 		super(x, y, path_img);
 	}
 	
-	public boolean get_detonado() {
-		return detonado;
+	public int get_velocidad() {
+		return 150;
 	}
-	
 }

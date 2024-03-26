@@ -5,4 +5,6 @@ public interface VentanaNotificable {
 	public void notificarse_animacion_en_progreso();
 	
 	public void notificarse_animacion_finalizada();
+
+	public void bloquear_teclado();
 }

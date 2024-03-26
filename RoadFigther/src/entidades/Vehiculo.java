@@ -6,7 +6,7 @@ import GUI.EntidadGrafica;
 import GUI.Ventana;
 import logica.EntidadLogica;
 
-public abstract class Entidad implements EntidadLogica {
+public abstract class Vehiculo implements EntidadLogica {
 	
 	protected int pos_x;
 	protected int pos_y;
@@ -19,7 +19,7 @@ public abstract class Entidad implements EntidadLogica {
 	protected String [] imagenes_representativas;
 	protected EntidadGrafica entidad_grafica;
 	
-	protected Entidad(int x, int y, String path_img) {
+	protected Vehiculo(int x, int y, String path_img) {
 		pos_x = x;
 		pos_y = y;
 		cargar_imagenes_representativas(path_img);
@@ -43,6 +43,12 @@ public abstract class Entidad implements EntidadLogica {
 	@Override
 	public int get_size_label_y() {
 		return size_label_y;
+	}
+	
+	public abstract int get_velocidad();
+	
+	public boolean get_detonado() {
+		return detonado;
 	}
 	
 	public Rectangle get_bounds() {
