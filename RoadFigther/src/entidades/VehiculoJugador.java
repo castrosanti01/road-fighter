@@ -14,7 +14,7 @@ public class VehiculoJugador extends Vehiculo{
 	protected int combustible;
 	protected int puntaje;
 	protected boolean descarilado_izquierdo, descarilado_derecho, descarrilado_en_proceso = false;
-	protected Timer timer;
+	protected Timer timer_descarrilar;
 	
 	public VehiculoJugador(int x, String path_img, Juego j) {
 		super(x, 375, path_img, j);
@@ -29,6 +29,28 @@ public class VehiculoJugador extends Vehiculo{
 	
 	public void set_velocidad(int v) {
 		velocidad = v;
+	}
+	
+	public void carrilar_izquierdo() {
+		if(descarrilado_en_proceso && descarilado_izquierdo) {
+			descarrilado_en_proceso = false;
+			descarilado_izquierdo = false;
+			entidad_grafica.rotar(45);
+			
+			timer_descarrilar.stop();
+        	mi_juego.notificar_descarrilado_finalizado();
+		}
+	}
+	
+	public void carrilar_derecho() {
+		if(descarrilado_en_proceso && descarilado_derecho) {
+			descarrilado_en_proceso = false;
+			descarilado_derecho = false;
+			entidad_grafica.rotar(-45);
+			
+			timer_descarrilar.stop();
+        	mi_juego.notificar_descarrilado_finalizado();
+		}
 	}
 	
 	public void cambiar_posicion_animado(int nueva_x, int nueva_y) {
@@ -66,43 +88,36 @@ public class VehiculoJugador extends Vehiculo{
 	    }
 	}
 	
-	public void carrilar_izquierdo() {
-		descarilado_izquierdo = false;
-	}
-	
-	public void carrilar_derecho() {
-		descarilado_derecho = false;
-	}
-	
 	public void descarrilar(int angulo) {
-		descarrilado_en_proceso = true;
 		mi_juego.notificar_descarrilado_en_proceso();
+		descarrilado_en_proceso = true;
+		
 		entidad_grafica.rotar(angulo);
 		if(angulo < 0)
 			descarilado_izquierdo = true;
 		else
 			descarilado_derecho = true;
 		
-		timer = new Timer(1000, new ActionListener() {
+		//Si no se acomoda el vehiculo antes de 1 segundo:
+		timer_descarrilar = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             	if(descarilado_izquierdo | descarilado_derecho) 
-            		entidad_grafica.notificarse_descarrilar(angulo);
-            	else
-            		entidad_grafica.rotar(-angulo);
+            		entidad_grafica.notificarse_descarrilar(angulo);	//Descarrilado completo
+            	
             	descarrilado_en_proceso = false;
-            	mi_juego.notificar_descarrilado_finalizado();
+            	//mi_juego.notificar_descarrilado_finalizado();
             }
         });
-        timer.setRepeats(false); 
-        timer.start();
+        timer_descarrilar.setRepeats(false); 
+        timer_descarrilar.start();
 	}
 	
 	public void detonar() {
 		super.detonar();
 		velocidad = 0;
 		if(descarrilado_en_proceso) {
-			timer.stop();
+			timer_descarrilar.stop();
 			mi_juego.notificar_descarrilado_finalizado();
 			descarrilado_en_proceso = false;
 		}

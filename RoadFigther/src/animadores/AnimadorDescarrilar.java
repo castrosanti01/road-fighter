@@ -38,7 +38,7 @@ public class AnimadorDescarrilar extends Thread implements Animador {
             @Override
             public void actionPerformed(ActionEvent e) {
             	celda_animada.rotar(angulo);
-            	if(i == 30) {
+            	if(i == 14) {
             		timer.stop();
             		manager.notificarse_finalizacion_animador(esteAnimador);
             	}

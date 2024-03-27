@@ -31,7 +31,6 @@ public class CentralAnimaciones {
     }
     
     public void animar_descarrilar(Celda celda, int angulo) {
-        ventana.bloquear_teclado();
         Animador animador = new AnimadorDescarrilar(this, celda, 50, angulo);
         agregar_animador_y_lanzar_pendientes(animador);
     }
@@ -55,6 +54,17 @@ public class CentralAnimaciones {
     
     public void notificarse_finalizacion_animador(Animador animador) {
         ventana.notificarse_animacion_finalizada();
+        Celda celda = animador.get_celda_asociada();
+        lanzar_animador_si_necesario(celda);
+    }
+    
+    public void notificarse_finalizacion_animador(AnimadorMovimiento animador) {
+        Celda celda = animador.get_celda_asociada();
+        lanzar_animador_si_necesario(celda);
+    }
+    
+    public void notificarse_finalizacion_animador(AnimadorDescarrilar animador) {
+        ventana.notificar_descarrilado_finalizado();
         Celda celda = animador.get_celda_asociada();
         lanzar_animador_si_necesario(celda);
     }

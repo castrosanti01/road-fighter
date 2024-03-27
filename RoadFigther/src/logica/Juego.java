@@ -217,11 +217,11 @@ public class Juego {
 	 }
 
 	public void notificar_descarrilado_en_proceso() {
-		mi_ventana.bloquear_aceleracion();
+		mi_ventana.notificar_descarrilado_en_proceso();
 	}
 
 	public void notificar_descarrilado_finalizado() {
-		mi_ventana.desbloquear_aceleracion();
+		mi_ventana.notificar_descarrilado_finalizado();
 	}
 	
 }
