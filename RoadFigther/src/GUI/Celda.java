@@ -16,16 +16,15 @@ public class Celda extends JLabel implements EntidadGrafica {
 	
 	protected Ventana mi_ventana;
 	protected EntidadLogica entidad_logica;
-	protected int size_label_x, size_label_y;
+	protected int size_label;
 	
 	
 	public Celda(Ventana v, EntidadLogica e) {
 		super();
 		mi_ventana = v;
 		entidad_logica = e;
-		size_label_x =  e.get_size_label_x(); 
-		size_label_y = e.get_size_label_y();
-		setBounds(e.get_pos_x()-30, e.get_pos_y(), size_label_x, size_label_y);
+		size_label =  e.get_size_label(); 
+		setBounds(e.get_pos_x()-30, e.get_pos_y(), size_label, size_label);
 		cambiar_imagen(e.get_imagen_representativa());	 
 	}
 	
@@ -33,12 +32,8 @@ public class Celda extends JLabel implements EntidadGrafica {
 		return entidad_logica;
 	}
 	
-	public int get_size_label_x() {
-		return size_label_x;
-	}
-	
-	public int get_size_label_y() {
-		return size_label_y;
+	public int get_size_label() {
+		return size_label;
 	}
 	
 	@Override
@@ -49,7 +44,7 @@ public class Celda extends JLabel implements EntidadGrafica {
 	@Override
 	public void notificarse_cambio_posicion(){
 		//System.out.println(entidad_logica.get_pos_x()+" "+ entidad_logica.get_pos_y());
-		setBounds(entidad_logica.get_pos_x()-30,entidad_logica.get_pos_y(), size_label_x, size_label_y);
+		setBounds(entidad_logica.get_pos_x()-30,entidad_logica.get_pos_y(), size_label, size_label);
 	}
 	
 	@Override
@@ -71,14 +66,14 @@ public class Celda extends JLabel implements EntidadGrafica {
 	public void rotar(int angulo) {
 	    // Create an AffineTransform object for rotation
 	    AffineTransform transform = new AffineTransform();
-	    transform.rotate(Math.toRadians(angulo), size_label_x / 2.0, size_label_y / 2.0);
+	    transform.rotate(Math.toRadians(angulo), size_label / 2.0, size_label / 2.0);
 
 	    // Get the current image icon
 	    ImageIcon currentIcon = (ImageIcon) getIcon();
 	    Image currentImage = currentIcon.getImage();
 
 	    // Apply the rotation to the image
-	    BufferedImage rotatedImage = new BufferedImage(size_label_x, size_label_y, BufferedImage.TYPE_INT_ARGB);
+	    BufferedImage rotatedImage = new BufferedImage(size_label, size_label, BufferedImage.TYPE_INT_ARGB);
 	    Graphics2D g2d = rotatedImage.createGraphics();
 	    g2d.drawImage(currentImage, transform, null);
 	    g2d.dispose();
@@ -90,7 +85,7 @@ public class Celda extends JLabel implements EntidadGrafica {
 	
 	public void cambiar_imagen(String i) {
 		ImageIcon imgIcon = new ImageIcon(this.getClass().getResource(i));
-		Image imgEscalada = imgIcon.getImage().getScaledInstance(size_label_x, size_label_y, Image.SCALE_SMOOTH);
+		Image imgEscalada = imgIcon.getImage().getScaledInstance(size_label, size_label, Image.SCALE_SMOOTH);
 		Icon iconoEscalado = new ImageIcon(imgEscalada);
 		setIcon(iconoEscalado);
 	}

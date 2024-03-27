@@ -1,27 +1,32 @@
 package entidades;
 
 import java.awt.Rectangle;
+import java.util.List;
 
 import GUI.EntidadGrafica;
 import GUI.Ventana;
 import logica.EntidadLogica;
+import logica.Juego;
 
 public abstract class Vehiculo implements EntidadLogica {
 	
 	protected int pos_x;
 	protected int pos_y;
+	protected Juego mi_juego;
 	
-	protected int size_label_x = Ventana.size_label_x;
-	protected int size_label_y = size_label_x;
+	protected int limite_izquierdo, limite_derecho;
+	
+	protected int size_label = Ventana.size_label_x;
 	
 	protected boolean detonado;
 	
 	protected String [] imagenes_representativas;
 	protected EntidadGrafica entidad_grafica;
 	
-	protected Vehiculo(int x, int y, String path_img) {
+	protected Vehiculo(int x, int y, String path_img, Juego j) {
 		pos_x = x;
 		pos_y = y;
+		mi_juego = j;
 		cargar_imagenes_representativas(path_img);
 	}
 	
@@ -36,27 +41,28 @@ public abstract class Vehiculo implements EntidadLogica {
 	}
 	
 	@Override
-	public int get_size_label_x() {
-		return size_label_x;
+	public int get_size_label() {
+		return size_label;
 	}
-	
-	@Override
-	public int get_size_label_y() {
-		return size_label_y;
-	}
-	
-	public abstract int get_velocidad();
 	
 	public boolean get_detonado() {
 		return detonado;
 	}
 	
 	public Rectangle get_bounds() {
-		return new Rectangle(pos_x+40, pos_y+10, size_label_x-40, size_label_y-10);
+		return new Rectangle(pos_x+40, pos_y+10, size_label-40, size_label-10);
 	}
 	
 	public void set_entidad_grafica(EntidadGrafica e) {
 		entidad_grafica = e;
+	}
+	
+	public void actualizar_limite_izquierdo(int limite) {
+		limite_izquierdo = limite;
+	}
+	
+	public void actualizar_limite_derecho(int limite) {
+		limite_derecho = limite;
 	}
 	
 	public void cambiar_posicion(int nueva_x, int nueva_y) {
@@ -69,6 +75,20 @@ public abstract class Vehiculo implements EntidadLogica {
 		pos_x = nueva_x;
 		pos_y = nueva_y;
 		entidad_grafica.notificarse_cambio_posicion_animado();
+		verificar_colision();
+		if(nueva_x <= limite_izquierdo | nueva_x >= limite_derecho)
+			detonar();
+	}
+	
+	public void verificar_colision() {
+		List<Vehiculo> vehiculos = mi_juego.get_entidades();
+		for(Vehiculo vehiculo: vehiculos) {
+			if(vehiculo.get_pos_y() > 0 && !detonado && vehiculo != this)
+				if(get_bounds().intersects(vehiculo.get_bounds())) {
+					detonar();
+					vehiculo.detonar();
+				}
+		}
 	}
 	
 	public void detonar() {
@@ -84,10 +104,9 @@ public abstract class Vehiculo implements EntidadLogica {
 	}
 	
 	protected void cargar_imagenes_representativas(String path_img) {
-		imagenes_representativas = new String [3];
+		imagenes_representativas = new String [2];
 		imagenes_representativas[0] = path_img + ".png";
-		imagenes_representativas[1] = path_img +"_detonado.png";
-		imagenes_representativas[2] = "/imagenes/0.png";
+		imagenes_representativas[1] = "/imagenes/vehiculo_detonado.png";
 	}
 
 }

@@ -29,7 +29,6 @@ public class Juego {
 	protected List<Vehiculo> vehiculos, vehiculos_a_eliminar;
 	
 	protected int vidas, combustible, nivel;
-	protected int limite_izquierdo, limite_derecho;
 	
 	protected Timer combustible_timer;
 	
@@ -47,8 +46,13 @@ public class Juego {
 		vehiculos = mi_nivel.get_entidades();
 		vehiculos_a_eliminar = new LinkedList<Vehiculo>();
 		
-		limite_izquierdo = mi_carretera.get_limite_izquierdo();
-		limite_derecho = mi_carretera.get_limite_derecho();
+		vehiculo_jugador.actualizar_limite_izquierdo(mi_carretera.get_limite_izquierdo());
+		vehiculo_jugador.actualizar_limite_derecho(mi_carretera.get_limite_derecho());
+		for(Vehiculo v: vehiculos) {
+			v.actualizar_limite_izquierdo(mi_carretera.get_limite_izquierdo());
+			v.actualizar_limite_derecho(mi_carretera.get_limite_derecho());
+		}
+			
 		
 		combustible = 100;
 		timer_combustible();
@@ -86,11 +90,10 @@ public class Juego {
 	}
 	
 	private void perder() {
-		System.out.println("fuiste");
 		combustible_timer.stop();
 		mi_ventana.actualizar_vidas(0);
 		mi_ventana.notificarse_animacion_en_progreso();
-        Timer timer = new Timer(2000, new ActionListener() {
+        Timer timer_perder = new Timer(2000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             	mi_ventana.vaciar_ventana();
@@ -99,8 +102,8 @@ public class Juego {
             	mi_ventana.notificarse_animacion_finalizada();
             }
         });
-        timer.setRepeats(false); 
-        timer.start();
+        timer_perder.setRepeats(false); 
+        timer_perder.start();
 	}
 	
 	public Vehiculo get_vehiculo_jugador() {
@@ -114,12 +117,12 @@ public class Juego {
 	public void mover_jugador(int d) {
 		switch (d) {
 			case Juego.IZQUIERDA: {
-				cambiar_posicion(vehiculo_jugador, vehiculo_jugador.get_pos_x() - 10);
+				vehiculo_jugador.cambiar_posicion_animado(vehiculo_jugador.get_pos_x() - 10, vehiculo_jugador.get_pos_y());
 				vehiculo_jugador.carrilar_derecho();
 				break;
 			}
 			case Juego.DERECHA: {
-				cambiar_posicion(vehiculo_jugador, vehiculo_jugador.get_pos_x() + 10);
+				vehiculo_jugador.cambiar_posicion_animado(vehiculo_jugador.get_pos_x() + 10, vehiculo_jugador.get_pos_y());
 				vehiculo_jugador.carrilar_izquierdo();
 				break;
 			}
@@ -134,59 +137,42 @@ public class Juego {
 		}
 	}
 	
-	private void cambiar_posicion(Vehiculo v, int nueva_x) {
-		Vehiculo vehiculo = v;
-		vehiculo.cambiar_posicion_animado(nueva_x, vehiculo.get_pos_y());
-		if(nueva_x <= limite_izquierdo | nueva_x >= limite_derecho) {
-			if(vehiculo.get_velocidad() >= 150)
-				vehiculo.detonar();
-			else {
-				if(nueva_x == limite_izquierdo) 
-					cambiar_posicion(vehiculo, vehiculo_jugador.get_pos_x() + 20);
-				if(nueva_x == limite_derecho)
-					cambiar_posicion(vehiculo, vehiculo_jugador.get_pos_x() - 20);
-			}
-		}
-	}
-	
 	private void avanzar_carretera(int cambio) {
 		vehiculo_jugador.aumentar_velocidad(cambio);
 		mi_carretera.moveRoad(vehiculo_jugador.get_velocidad());
 		mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
-		verificar_colision();
-		if(!vehiculos.isEmpty()) {
-			for(Vehiculo v: vehiculos) {
-				if(v.get_pos_y() > 500)
-					vehiculos_a_eliminar.add(v);
-				else
-					v.cambiar_posicion(v.get_pos_x(), v.get_pos_y() + vehiculo_jugador.get_velocidad()/25);	//mas alto, mas rapido son
-			}
-			for(Vehiculo v: vehiculos_a_eliminar)
-				vehiculos.remove(v);
+		vehiculo_jugador.verificar_colision();
+		for(Vehiculo v: vehiculos) {
+			if(v.get_pos_y() > 500)
+				vehiculos_a_eliminar.add(v);
+			else
+				v.cambiar_posicion(v.get_pos_x(), v.get_pos_y() + vehiculo_jugador.get_velocidad()/15);	//mas alto, mas rapido son
 		}
+		for(Vehiculo v: vehiculos_a_eliminar)
+			vehiculos.remove(v);
 	}
 	
 	public void desacelerar() {
-		//Desacelera el vehiculo del jugador 
 		vehiculo_jugador.disminuir_velocidad(8);
 		mi_carretera.moveRoad(vehiculo_jugador.get_velocidad());
 		mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
 		for(Vehiculo v: vehiculos) {
 			if(!v.get_detonado()) {
-				v.cambiar_posicion(v.get_pos_x(), v.get_pos_y() - 400/50);
-				if(vehiculo_jugador.get_velocidad() == 0) {
+				v.cambiar_posicion(v.get_pos_x(), v.get_pos_y() - 250/15);
+				if(vehiculo_jugador.get_velocidad() == 0)
 					if(v.get_pos_y() > -90) {
 						v.cambiar_posicion_animado(v.get_pos_x(), -90);
 						vehiculos_a_eliminar.add(v);
 					}
-				}
 			}
+			else 
+				v.cambiar_posicion(v.get_pos_x(), v.get_pos_y() + vehiculo_jugador.get_velocidad()/15);
 		}
 		for(Vehiculo v: vehiculos_a_eliminar)
 			vehiculos.remove(v);
 	}
 
-	public void detonar(VehiculoJugador vehiculo) {
+	public void notificar_detonado() {
 		if(vidas == 1) {
 			--vidas;
 			perder();
@@ -200,30 +186,11 @@ public class Juego {
 		}
 	}
 
-	private void verificar_colision() {
-	    for(Vehiculo v : vehiculos) {
-	        if(vehiculo_jugador.get_bounds().intersects(v.get_bounds())) {
-	            //Diferencia para saber si moverse a la derecha o a la izquierda
-	        	double diferencia = (vehiculo_jugador.get_pos_x()+vehiculo_jugador.get_size_label_x()/2) - (v.get_pos_x()+v.get_size_label_x()/2);
-	            if(diferencia > 0) {
-	                vehiculo_jugador.descarrilar(45);
-	                cambiar_posicion(vehiculo_jugador, vehiculo_jugador.get_pos_x() + 35);
-	                cambiar_posicion(v, v.get_pos_x() - 35);
-	            }
-	            else { 
-	            	vehiculo_jugador.descarrilar(-45);
-	            	cambiar_posicion(vehiculo_jugador, vehiculo_jugador.get_pos_x() - 35);
-	            	cambiar_posicion(v, v.get_pos_x() + 35);
-	            }
-	        }
-	    }
-	}
-
 	public void notificar_fin_de_pista() {
 		vehiculo_jugador.set_velocidad(0);
         combustible_timer.stop();
         mi_ventana.notificarse_animacion_en_progreso();
-        Timer timer = new Timer(2000, new ActionListener() {
+        Timer timer_fin_de_pista = new Timer(2000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             	mi_ventana.vaciar_ventana();
@@ -233,8 +200,8 @@ public class Juego {
             	}
             }
         });
-        timer.setRepeats(false); 
-        timer.start();	
+        timer_fin_de_pista.setRepeats(false); 
+        timer_fin_de_pista.start();	
 	}
 
 	public static void main(String[] args) {
@@ -249,4 +216,12 @@ public class Juego {
 	    });
 	 }
 
+	public void notificar_descarrilado_en_proceso() {
+		mi_ventana.bloquear_aceleracion();
+	}
+
+	public void notificar_descarrilado_finalizado() {
+		mi_ventana.desbloquear_aceleracion();
+	}
+	
 }

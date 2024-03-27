@@ -22,7 +22,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     protected JLayeredPane panel_principal;
     protected JPanel panel_carretera;
 
-    protected boolean bloquear_jugabilidad, isPressingX, isPressingZ;
+    protected boolean bloquear_jugabilidad, bloquear_aceleracion, isPressingX, isPressingZ;
 
     protected Timer leftTimer, rightTimer, zTimer, xTimer, desacelerar;
     
@@ -75,7 +75,25 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 			desacelerar.start();
 		}
 	}
+	
+	public void bloquear_aceleracion() {
+		synchronized(this){
+			bloquear_aceleracion = true;
+			isPressingZ = false;
+			isPressingX = false;
+			zTimer.stop();
+			xTimer.stop();
+			desacelerar.start();
+		}
+	}
+	
+	public void desbloquear_aceleracion() {
+		synchronized(this){
+			bloquear_aceleracion = false;
+		}
+	}
 
+	
     @Override
     public void animar_movimiento(Celda c) {
     	mi_animador.animar_movimiento(c);
@@ -113,7 +131,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         setSize(650, 525);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        getContentPane().setBackground(Color.GREEN);
+        getContentPane().setBackground(Color.BLACK);
         setResizable(false);
         setIconImage(new ImageIcon(this.getClass().getResource("/imagenes/icono.png")).getImage());
         setVisible(true);
@@ -126,21 +144,25 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         panel_carretera.setLayout(null);
         
         velocimetro = new JLabel("0 Km/h");
+        velocimetro.setForeground(new Color(255, 255, 255));
         velocimetro.setFont(new Font("Consolas", Font.BOLD, 30));
         velocimetro.setBounds(410, 125, 179, 36);
         panel_principal.add(velocimetro);
         
         combustible = new JLabel("FUEL: ");
+        combustible.setForeground(new Color(255, 255, 255));
         combustible.setFont(new Font("Consolas", Font.BOLD, 30));
         combustible.setBounds(410, 230, 179, 36);
         panel_principal.add(combustible);
         
         puntaje = new JLabel("000000");
+        puntaje.setForeground(new Color(255, 255, 255));
         puntaje.setFont(new Font("Consolas", Font.BOLD, 30));
         puntaje.setBounds(410, 37, 179, 36);
         panel_principal.add(puntaje);
         
         vidas = new JLabel("Vidas: ");
+        vidas.setForeground(new Color(255, 255, 255));
         vidas.setFont(new Font("Consolas", Font.BOLD, 30));
         vidas.setBounds(410, 416, 179, 36);
         panel_principal.add(vidas);
@@ -156,9 +178,19 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
                     
                 		case KeyEvent.VK_RIGHT: rightTimer.start(); break;
                     
-                		case KeyEvent.VK_Z: zTimer.start(); isPressingZ = true; break;
+                		case KeyEvent.VK_Z: 
+                			if(!bloquear_aceleracion) {
+                				zTimer.start(); 
+                				isPressingZ = true;
+                				break;
+                			}
                     
-                		case KeyEvent.VK_X: xTimer.start(); isPressingX = true; break;
+                		case KeyEvent.VK_X: 
+                			if(!bloquear_aceleracion) {
+                				xTimer.start(); 
+                				isPressingX = true; 
+                				break;
+                			}
                 	}
                 }
             }
@@ -177,6 +209,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 	                    	zTimer.stop();
 	                        desacelerar.start();
 	                        break;
+	                        
 	                    case KeyEvent.VK_X:
 	                    	isPressingX = false;
 	                        xTimer.stop();

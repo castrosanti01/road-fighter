@@ -33,8 +33,7 @@ public class AnimadorMovimiento extends Thread implements Animador {
 	}
 	
 	public void run() {
-		int size_label_x = celda_animada.get_size_label_x();
-		int size_label_y = celda_animada.get_size_label_y();
+		int size_label = celda_animada.get_size_label();
 		int pos_x_actual = celda_animada.getX();
 		int pos_y_actual = celda_animada.getY();
 		
@@ -53,7 +52,7 @@ public class AnimadorMovimiento extends Thread implements Animador {
 			pos_x_actual += paso_en_x * step;
 			pos_y_actual += paso_en_y * step;
 			
-			celda_animada.setBounds(pos_x_actual, pos_y_actual, size_label_x, size_label_y);
+			celda_animada.setBounds(pos_x_actual, pos_y_actual, size_label, size_label);
 			
 			try {
 				sleep(delay);

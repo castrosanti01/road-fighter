@@ -2,6 +2,7 @@ package entidades;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.Timer;
 
@@ -9,16 +10,14 @@ import logica.Juego;
 
 public class VehiculoJugador extends Vehiculo{
 	
-	protected Juego mi_juego;
 	protected int velocidad;
 	protected int combustible;
 	protected int puntaje;
 	protected boolean descarilado_izquierdo, descarilado_derecho, descarrilado_en_proceso = false;
 	protected Timer timer;
 	
-	public VehiculoJugador(int x, Juego j, String path_img) {
-		super(x, 375, path_img);
-		mi_juego = j;
+	public VehiculoJugador(int x, String path_img, Juego j) {
+		super(x, 375, path_img, j);
 		combustible = 100;
 		velocidad = 0;
 		puntaje = 0;
@@ -28,12 +27,43 @@ public class VehiculoJugador extends Vehiculo{
 		return velocidad;
 	}
 	
-	public boolean get_detonado() {
-		return detonado;
-	}
-	
 	public void set_velocidad(int v) {
 		velocidad = v;
+	}
+	
+	public void cambiar_posicion_animado(int nueva_x, int nueva_y) {
+		pos_x = nueva_x;
+		pos_y = nueva_y;
+		entidad_grafica.notificarse_cambio_posicion_animado();
+		
+		if((nueva_x <= limite_izquierdo | nueva_x >= limite_derecho) && velocidad >= 150)
+			detonar();
+		else {
+			if(nueva_x == limite_izquierdo) 
+				cambiar_posicion_animado(pos_x + 20, pos_y);
+			if(nueva_x == limite_derecho)
+				cambiar_posicion_animado(pos_x - 20, pos_y);
+		}
+	}
+	
+	public void verificar_colision() {
+		List<Vehiculo> vehiculos = mi_juego.get_entidades();
+	    for(Vehiculo vehiculo : vehiculos) {
+	        if(get_bounds().intersects(vehiculo.get_bounds()) && !descarrilado_en_proceso && !vehiculo.get_detonado()) {
+	            //Diferencia para saber si moverse a la derecha o a la izquierda
+	        	double diferencia = (pos_x + size_label/2) - (vehiculo.get_pos_x() + vehiculo.get_size_label()/2);
+	            if(diferencia > 0) {
+	                descarrilar(-45);
+	                cambiar_posicion_animado(pos_x + 35, pos_y);
+	                vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() - 35, vehiculo.get_pos_y());
+	            }
+	            else { 
+	            	descarrilar(45);
+	            	cambiar_posicion_animado(pos_x - 35, pos_y);
+	            	vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() + 35, vehiculo.get_pos_y());
+	            }
+	        }
+	    }
 	}
 	
 	public void carrilar_izquierdo() {
@@ -46,6 +76,7 @@ public class VehiculoJugador extends Vehiculo{
 	
 	public void descarrilar(int angulo) {
 		descarrilado_en_proceso = true;
+		mi_juego.notificar_descarrilado_en_proceso();
 		entidad_grafica.rotar(angulo);
 		if(angulo < 0)
 			descarilado_izquierdo = true;
@@ -55,11 +86,12 @@ public class VehiculoJugador extends Vehiculo{
 		timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	if(descarilado_izquierdo | descarilado_derecho)
+            	if(descarilado_izquierdo | descarilado_derecho) 
             		entidad_grafica.notificarse_descarrilar(angulo);
             	else
             		entidad_grafica.rotar(-angulo);
             	descarrilado_en_proceso = false;
+            	mi_juego.notificar_descarrilado_finalizado();
             }
         });
         timer.setRepeats(false); 
@@ -71,20 +103,16 @@ public class VehiculoJugador extends Vehiculo{
 		velocidad = 0;
 		if(descarrilado_en_proceso) {
 			timer.stop();
+			mi_juego.notificar_descarrilado_finalizado();
 			descarrilado_en_proceso = false;
 		}
-		mi_juego.detonar(this);
-	}
-	
-	private void cambiar_posicion_animado(int nueva_x) {
-		pos_x = nueva_x;
-		entidad_grafica.notificarse_cambio_posicion_animado();
+		mi_juego.notificar_detonado();
 	}
 	
 	public void reivir() {
 		detonado = false;
 		entidad_grafica.notificarse_revivir();
-		cambiar_posicion_animado(200);
+		cambiar_posicion_animado(200, pos_y);
 	}
 	
 	public void aumentar_velocidad(int cambio) {
