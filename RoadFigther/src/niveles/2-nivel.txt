@@ -2,8 +2,8 @@
 Nivel: 2
 
 # Tamaño de la Carretera
-Ancho Carretera: 100
-Largo Carretera: 5000
+Ancho Carretera: 175
+Largo Carretera: 1000
 
 # Posicion inicial Jugador
 Posicion inicial: 200

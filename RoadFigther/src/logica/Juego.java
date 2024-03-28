@@ -189,7 +189,7 @@ public class Juego {
 	public void notificar_fin_de_pista() {
 		vehiculo_jugador.set_velocidad(0);
         combustible_timer.stop();
-        mi_ventana.notificarse_animacion_en_progreso();
+        mi_ventana.notificar_fin_de_nivel();
         Timer timer_fin_de_pista = new Timer(2000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -198,6 +198,8 @@ public class Juego {
             		mi_ventana.notificarse_animacion_finalizada();
 	            	cargar_nivel(++nivel);
             	}
+            	else
+            		mi_ventana.notificar_fin_de_juego();
             }
         });
         timer_fin_de_pista.setRepeats(false); 

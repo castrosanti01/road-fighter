@@ -26,8 +26,8 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 
     protected Timer leftTimer, rightTimer, zTimer, xTimer, desacelerar;
     
-    protected JLabel velocimetro, combustible, puntaje, vidas;
-
+    protected JLabel velocimetro, combustible, puntaje, vidas, info_nivel;
+	
     public static final int size_label_x = 80;
     
 
@@ -83,6 +83,37 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 			bloquear_aceleracion = false;
 		}
 	}
+	
+	public void notificar_fin_de_nivel() {
+		notificarse_animacion_en_progreso();
+		info_nivel.setText("<html>CHECKPOINT<br>HI: "+puntaje.getText()+"</html>");
+		info_nivel.setVisible(true);
+	}
+	
+	public void notificar_fin_de_juego() {
+		notificarse_animacion_en_progreso();
+		panel_principal.removeAll();
+		
+		info_nivel.setBounds((this.getWidth()-200)/2, 150, 200, 120);
+		info_nivel.setText("<html>YOU WIN<br>HI: "+puntaje.getText()+"</html>");
+		info_nivel.setVisible(true);
+		panel_principal.add(info_nivel);
+		
+		JButton boton_reintentar = new JButton("Volver a Jugar");
+		boton_reintentar.setBounds((this.getWidth()-140)/2, 365, 140, 30);
+        boton_reintentar.setBackground(new Color(65, 105, 225)); 
+        boton_reintentar.setForeground(Color.WHITE);
+        boton_reintentar.setFont(new Font("Consolas", Font.BOLD, 16));
+        boton_reintentar.setBorder(BorderFactory.createLineBorder(new Color(30, 144, 255)));
+        panel_principal.add(boton_reintentar);
+        
+        boton_reintentar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		dispose();
+        		new Juego();
+        	}
+        });
+	}
 
     @Override
     public void animar_movimiento(Celda c) {
@@ -132,6 +163,16 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         panel_carretera.setBounds(0, 0, 400, 500);
         panel_principal.add(panel_carretera);
         panel_carretera.setLayout(null);
+        
+        info_nivel = new JLabel("");
+        info_nivel.setForeground(new Color(255, 255, 255));
+        info_nivel.setFont(new Font("Consolas", Font.BOLD, 30));
+        info_nivel.setHorizontalAlignment(SwingConstants.CENTER);
+        info_nivel.setOpaque(true);
+        info_nivel.setBackground(Color.BLACK);
+        info_nivel.setBounds(10, 102, 380, 120);
+        panel_carretera.add(info_nivel);
+        info_nivel.setVisible(false);
         
         velocimetro = new JLabel("0 Km/h");
         velocimetro.setForeground(new Color(255, 255, 255));
@@ -259,11 +300,9 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     }
 
 	public void vaciar_ventana() {
-	    // Reinicializar el panel
 	    panel_principal.removeAll();
 	    inicializar();
 	    revalidate();
 	    repaint();
 	}
-
 }
