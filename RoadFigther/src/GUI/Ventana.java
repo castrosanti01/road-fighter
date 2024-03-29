@@ -8,8 +8,6 @@ import animadores.CentralAnimaciones;
 import entidades.VehiculoJugador;
 import logica.EntidadLogica;
 import logica.Juego;
-
-
 import java.awt.Font;
 
 @SuppressWarnings("serial")
@@ -28,7 +26,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     
     protected JLabel velocimetro, combustible, puntaje, vidas, info_nivel;
 	
-    public static final int size_label_x = 80;
+    public static final int size_label = 80;
     
 
     public Ventana(Juego j) {
@@ -84,18 +82,18 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 		}
 	}
 	
-	public void notificar_fin_de_nivel() {
+	public void notificar_fin_de_nivel(String info) {
 		notificarse_animacion_en_progreso();
-		info_nivel.setText("<html>CHECKPOINT<br>HI: "+puntaje.getText()+"</html>");
+		info_nivel.setText("<html>"+info+"<br>HI: "+mi_juego.get_puntaje()+"</html>");
 		info_nivel.setVisible(true);
 	}
 	
-	public void notificar_fin_de_juego() {
+	public void notificar_fin_de_juego(String info) {
 		notificarse_animacion_en_progreso();
 		panel_principal.removeAll();
 		
 		info_nivel.setBounds((this.getWidth()-200)/2, 150, 200, 120);
-		info_nivel.setText("<html>YOU WIN<br>HI: "+puntaje.getText()+"</html>");
+		info_nivel.setText("<html>"+info+"<br>HI: "+mi_juego.get_puntaje()+"</html>");
 		info_nivel.setVisible(true);
 		panel_principal.add(info_nivel);
 		
@@ -135,12 +133,16 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         panel_carretera.add(mi_carretera);
 	}
 
+    public void actualizar_puntaje(String puntos) {
+    	puntaje.setText(puntos);
+	}
+    
     public void actualizar_velocidad(int vel) {
     	velocimetro.setText(vel + " Km/h");
 	}
     
     public void actualizar_vidas(int cant) {
-    	vidas.setText("Vidas: " + cant);
+    	vidas.setText("VIDAS: " + cant);
 	}
     
     public void actualizar_combustible(int cant) {
@@ -192,7 +194,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         puntaje.setBounds(410, 37, 179, 36);
         panel_principal.add(puntaje);
         
-        vidas = new JLabel("Vidas: ");
+        vidas = new JLabel("VIDAS: ");
         vidas.setForeground(new Color(255, 255, 255));
         vidas.setFont(new Font("Consolas", Font.BOLD, 30));
         vidas.setBounds(410, 416, 179, 36);
@@ -305,4 +307,5 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 	    revalidate();
 	    repaint();
 	}
+
 }

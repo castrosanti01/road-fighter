@@ -16,7 +16,7 @@ public abstract class Vehiculo implements EntidadLogica {
 	
 	protected int limite_izquierdo, limite_derecho;
 	
-	protected int size_label = Ventana.size_label_x;
+	protected int size_label = Ventana.size_label;
 	
 	protected boolean detonado;
 	
@@ -69,6 +69,8 @@ public abstract class Vehiculo implements EntidadLogica {
 		pos_x = nueva_x;
 		pos_y = nueva_y;
 		entidad_grafica.notificarse_cambio_posicion();
+		if(pos_y > 500)
+			mi_juego.actualizar_puntaje();
 	}
 	
 	public void cambiar_posicion_animado(int nueva_x, int nueva_y) {
