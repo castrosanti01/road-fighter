@@ -12,9 +12,12 @@ import GUI.Carretera;
 import entidades.Vehiculo;
 import entidades.VehiculoEnemigo;
 import entidades.VehiculoJugador;
+import entidades.VehiculoPowerUp;
 import entidades.VehiculoRuta;
 
 public class GeneradorNivel {
+	
+	private static final int distanciamiento = -240;
 
 	public static Nivel cargar_nivel(InputStream nombreArchivo, Juego juego) {
 		
@@ -26,8 +29,6 @@ public class GeneradorNivel {
 		int ancho_carretera = 0;
 		int largo_carretera = 0;
 		int posicion_inicial = 0;
-		int cantidad_vehiculos_ruta = 0;
-		int cantidad_vehiculos_enemigos = 0;
 		
 		String linea;
 
@@ -54,12 +55,6 @@ public class GeneradorNivel {
 				    	case "Posicion inicial":
 				    		posicion_inicial = Integer.parseInt(valor);
 				      		break;
-				    	case "Cantidad de Vehiculos de Ruta":
-				    		cantidad_vehiculos_ruta = Integer.parseInt(valor);
-				      		break;
-				    	case "Cantidad de Vehiculos Enemigos":
-				    		cantidad_vehiculos_enemigos = Integer.parseInt(valor);
-				      		break;
 				    }
 				}
 			}
@@ -71,20 +66,63 @@ public class GeneradorNivel {
 	    
 		Carretera carretera = new Carretera(ancho_carretera, largo_carretera, juego);
 		VehiculoJugador jugador = new VehiculoJugador(posicion_inicial,"/imagenes/vehiculo_jugador", juego);
-		VehiculoRuta vehiculo_ruta;
-		VehiculoEnemigo vehiculo_enemigo;
+		Vehiculo vehiculo;
+		
+		int cantidad_vehiculos = largo_carretera/500 + 10;
+		int contador = 1;
+		
+		int limite_carretera = carretera.get_limite_derecho() - carretera.get_limite_izquierdo();
+		int carril_random;
+		int carril_izquierdo_random;
+		int carril_derecho_random;
 		
 		List<Vehiculo> entidades = new LinkedList<Vehiculo>();
-		for(int i = 1; i <= cantidad_vehiculos_ruta; i++) {
-			int numeroAleatorio = random.nextInt(carretera.get_limite_derecho()-carretera.get_limite_izquierdo()) + carretera.get_limite_izquierdo();
-			vehiculo_ruta = new VehiculoRuta(numeroAleatorio, -240 * i, "/imagenes/vehiculo_ruta", juego);
-			entidades.add(vehiculo_ruta);
+		while(contador <= cantidad_vehiculos+1) {
+		    int randomNumber = random.nextInt(100);
+		    if(randomNumber < 50) {
+		        // 50% de probabilidad para un vehiculo de ruta
+		        carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
+		        vehiculo = new VehiculoRuta(carril_random, distanciamiento * contador++, "/imagenes/vehiculo_ruta", juego);
+		        entidades.add(vehiculo);
+		    } 
+		    else if(randomNumber < 70) {
+		        // 20% de probabilidad para dos vehiculo de ruta
+		        carril_izquierdo_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera / 2);
+		        carril_derecho_random = carretera.get_limite_izquierdo() + (limite_carretera / 2) + random.nextInt(limite_carretera / 2);
+		        
+		        vehiculo = new VehiculoRuta(carril_izquierdo_random, distanciamiento * contador, "/imagenes/vehiculo_ruta", juego);
+		        entidades.add(vehiculo);
+		        vehiculo = new VehiculoRuta(carril_derecho_random, distanciamiento * contador++, "/imagenes/vehiculo_ruta", juego);
+		        entidades.add(vehiculo);
+		    } 
+		    else if(randomNumber < 90){
+		        // 20% de probabilidad para un vehiculo enemigo
+		        carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
+		        vehiculo = new VehiculoEnemigo(carril_random, distanciamiento * contador++, "/imagenes/vehiculo_enemigo", juego);
+		        entidades.add(vehiculo);
+		    }
+		    else {
+		    	// 10% de probabilidad para un camion
+		        carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
+		        vehiculo = new VehiculoRuta(carril_random, distanciamiento * contador++, "/imagenes/camion", juego);
+		        entidades.add(vehiculo);
+		    }
+		    	
 		}
-		for(int i = 1; i <= cantidad_vehiculos_enemigos; i++) {
-			int numeroAleatorio = random.nextInt(carretera.get_limite_derecho()-carretera.get_limite_izquierdo()) + carretera.get_limite_izquierdo();
-			vehiculo_enemigo = new VehiculoEnemigo(numeroAleatorio, ((-240*cantidad_vehiculos_ruta)/cantidad_vehiculos_enemigos)*i, "/imagenes/vehiculo_enemigo", juego);
-			entidades.add(vehiculo_enemigo);
-		}
+		
+		carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
+		vehiculo = new VehiculoPowerUp(carril_random, -340, "/imagenes/vehiculo_power_up", juego);
+		entidades.add(vehiculo);
+
+		carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
+		vehiculo = new VehiculoPowerUp(carril_random, distanciamiento * cantidad_vehiculos / 4, "/imagenes/vehiculo_power_up", juego);
+		entidades.add(vehiculo);
+		
+		carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
+		vehiculo = new VehiculoPowerUp(carril_random, distanciamiento * (cantidad_vehiculos - cantidad_vehiculos / 4), "/imagenes/vehiculo_power_up", juego);
+		entidades.add(vehiculo);
+		
+		
 		
 		return new Nivel.Builder()
 				.nivelActual(nivel)

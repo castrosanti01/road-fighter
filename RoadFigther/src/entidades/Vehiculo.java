@@ -83,6 +83,7 @@ public abstract class Vehiculo implements EntidadLogica {
 	}
 	
 	public void verificar_colision() {
+		//Si se chochan entre si
 		List<Vehiculo> vehiculos = mi_juego.get_entidades();
 		for(Vehiculo vehiculo: vehiculos) {
 			if(vehiculo.get_pos_y() > 0 && !detonado && vehiculo != this)
@@ -93,6 +94,21 @@ public abstract class Vehiculo implements EntidadLogica {
 		}
 	}
 	
+	protected void intersecta(VehiculoJugador vehiculo) {
+		//Diferencia para saber si moverse a la derecha o a la izquierda
+    	double diferencia = (vehiculo.get_pos_x() + size_label/2) - (get_pos_x() + size_label/2);
+        if(diferencia > 0) {
+        	vehiculo.descarrilar(-45);
+        	vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() + 35, vehiculo.get_pos_y());
+            cambiar_posicion_animado(get_pos_x() - 35, get_pos_y());
+        }
+        else { 
+        	vehiculo.descarrilar(45);
+        	vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() - 35, vehiculo.get_pos_y());
+        	cambiar_posicion_animado(get_pos_x() + 35, get_pos_y());
+        }
+	}
+
 	public void detonar() {
 		detonado = true;
 		entidad_grafica.notificarse_cambio_estado();
@@ -101,7 +117,7 @@ public abstract class Vehiculo implements EntidadLogica {
 	@Override
 	public String get_imagen_representativa() {
 		int indice = 0;
-		indice += (detonado ? 1 : 0);
+		indice = (detonado ? 1 : 0);
 		return imagenes_representativas[indice];
 	}
 	

@@ -12,23 +12,28 @@ public class VehiculoJugador extends Vehiculo{
 	
 	protected int velocidad;
 	protected int combustible;
-	protected int puntaje;
 	protected boolean descarilado_izquierdo, descarilado_derecho, descarrilado_en_proceso = false;
 	protected Timer timer_descarrilar;
 	
 	public VehiculoJugador(int x, String path_img, Juego j) {
 		super(x, 375, path_img, j);
-		combustible = 100;
 		velocidad = 0;
-		puntaje = 0;
 	}
 	
 	public int get_velocidad() {
 		return velocidad;
 	}
 	
-	public void set_velocidad(int v) {
-		velocidad = v;
+	public int get_combustible() {
+		return combustible;
+	}
+	
+	public void set_velocidad(int vel) {
+		velocidad = vel;
+	}
+	
+	public void set_combustible(int comb) {
+		combustible = comb;
 	}
 	
 	public void carrilar_izquierdo() {
@@ -71,20 +76,8 @@ public class VehiculoJugador extends Vehiculo{
 	public void verificar_colision() {
 		List<Vehiculo> vehiculos = mi_juego.get_entidades();
 	    for(Vehiculo vehiculo : vehiculos) {
-	        if(get_bounds().intersects(vehiculo.get_bounds()) && !descarrilado_en_proceso && !vehiculo.get_detonado()) {
-	            //Diferencia para saber si moverse a la derecha o a la izquierda
-	        	double diferencia = (pos_x + size_label/2) - (vehiculo.get_pos_x() + vehiculo.get_size_label()/2);
-	            if(diferencia > 0) {
-	                descarrilar(-45);
-	                cambiar_posicion_animado(pos_x + 35, pos_y);
-	                vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() - 35, vehiculo.get_pos_y());
-	            }
-	            else { 
-	            	descarrilar(45);
-	            	cambiar_posicion_animado(pos_x - 35, pos_y);
-	            	vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() + 35, vehiculo.get_pos_y());
-	            }
-	        }
+	        if(get_bounds().intersects(vehiculo.get_bounds()) && !descarrilado_en_proceso && !vehiculo.get_detonado()) 
+	        	vehiculo.intersecta(this);	           
 	    }
 	}
 	
@@ -106,7 +99,6 @@ public class VehiculoJugador extends Vehiculo{
             		entidad_grafica.notificarse_descarrilar(angulo);	//Descarrilado completo
             	
             	descarrilado_en_proceso = false;
-            	//mi_juego.notificar_descarrilado_finalizado();
             }
         });
         timer_descarrilar.setRepeats(false); 
@@ -116,6 +108,7 @@ public class VehiculoJugador extends Vehiculo{
 	public void detonar() {
 		super.detonar();
 		velocidad = 0;
+		combustible -= 5; 
 		if(descarrilado_en_proceso) {
 			timer_descarrilar.stop();
 			mi_juego.notificar_descarrilado_finalizado();

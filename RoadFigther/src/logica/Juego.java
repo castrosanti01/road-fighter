@@ -29,7 +29,7 @@ public class Juego {
 	protected VehiculoJugador vehiculo_jugador;
 	protected List<Vehiculo> vehiculos, vehiculos_a_eliminar;
 	
-	protected int vidas, combustible, nivel, puntaje;
+	protected int vidas, nivel, puntaje;
 	
 	protected Timer combustible_timer;
 	
@@ -51,6 +51,7 @@ public class Juego {
 		vehiculos = mi_nivel.get_entidades();
 		vehiculos_a_eliminar = new LinkedList<Vehiculo>();
 		
+		vehiculo_jugador.set_combustible(100);
 		vehiculo_jugador.actualizar_limite_izquierdo(mi_carretera.get_limite_izquierdo());
 		vehiculo_jugador.actualizar_limite_derecho(mi_carretera.get_limite_derecho());
 		for(Vehiculo v: vehiculos) {
@@ -58,7 +59,6 @@ public class Juego {
 			v.actualizar_limite_derecho(mi_carretera.get_limite_derecho());
 		}
 		
-		combustible = 100;
 		timer_combustible();
 		combustible_timer.start();
 		
@@ -69,16 +69,16 @@ public class Juego {
 	}
 	
 	private void timer_combustible() {
-		mi_ventana.actualizar_combustible(combustible);
+		mi_ventana.actualizar_combustible(vehiculo_jugador.get_combustible());
 		combustible_timer = new Timer(1000, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	combustible--;
-            	if(combustible < 0) {
+            	vehiculo_jugador.set_combustible(vehiculo_jugador.get_combustible()-1);
+            	if(vehiculo_jugador.get_combustible() < 0) {
             		perder();
             		combustible_timer.stop();
             	}
             	else
-            		mi_ventana.actualizar_combustible(combustible);
+            		mi_ventana.actualizar_combustible(vehiculo_jugador.get_combustible());
             }
         });
 	}

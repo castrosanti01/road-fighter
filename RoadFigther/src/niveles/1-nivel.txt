@@ -3,13 +3,7 @@ Nivel: 1
 
 # Tamaño de la Carretera
 Ancho Carretera: 260
-Largo Carretera: 15000
+Largo Carretera: 30000
 
 # Posicion inicial Jugador
 Posicion inicial: 200
-
-# Cantidad de Vehiculos de Ruta
-Cantidad de Vehiculos de Ruta: 60
-
-# Cantidad de Vehiculos Enemigos
-Cantidad de Vehiculos Enemigos: 13
