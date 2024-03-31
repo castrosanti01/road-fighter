@@ -31,7 +31,7 @@ public class Juego {
 	
 	protected int vidas, nivel, puntaje;
 	
-	protected Timer combustible_timer;
+	protected Timer timer_combustible, timer_puntaje_combustible, timer_fin_de_pista;
 	
 	protected ArchivoPuntaje mi_archivo_puntaje;
 	
@@ -60,7 +60,7 @@ public class Juego {
 		}
 		
 		timer_combustible();
-		combustible_timer.start();
+		timer_combustible.start();
 		
 		mi_ventana.actualizar_vidas(vidas);
 		mi_ventana.actualizar_carretera(mi_carretera);
@@ -70,12 +70,12 @@ public class Juego {
 	
 	private void timer_combustible() {
 		mi_ventana.actualizar_combustible(vehiculo_jugador.get_combustible());
-		combustible_timer = new Timer(1000, new ActionListener() {
+		timer_combustible = new Timer(750, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	vehiculo_jugador.set_combustible(vehiculo_jugador.get_combustible()-1);
             	if(vehiculo_jugador.get_combustible() < 0) {
             		perder();
-            		combustible_timer.stop();
+            		timer_combustible.stop();
             	}
             	else
             		mi_ventana.actualizar_combustible(vehiculo_jugador.get_combustible());
@@ -155,6 +155,7 @@ public class Juego {
 		vehiculo_jugador.disminuir_velocidad(8);
 		mi_carretera.moveRoad(vehiculo_jugador.get_velocidad());
 		mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
+		vehiculo_jugador.verificar_colision();
 		for(Vehiculo v: vehiculos) {
 			if(!v.get_detonado()) {
 				v.cambiar_posicion(v.get_pos_x(), v.get_pos_y() - 250/15);
@@ -197,12 +198,37 @@ public class Juego {
 	public void notificar_descarrilado_finalizado() {
 		mi_ventana.notificar_descarrilado_finalizado();
 	}
+	
+	public void notificar_power_up(int pos_x) {
+		puntaje += 1000;
+		mi_ventana.notificar_power_up(pos_x);
+	}
 
 	public void notificar_fin_de_pista() {
 		vehiculo_jugador.set_velocidad(0);
-        combustible_timer.stop();
+        timer_combustible.stop();
         mi_ventana.notificar_fin_de_nivel("CHECKPOINT");
-        Timer timer_fin_de_pista = new Timer(2000, new ActionListener() {
+        
+        timer_puntaje_combustible = new Timer(50, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	if(vehiculo_jugador.get_combustible() != 0) {
+            		vehiculo_jugador.set_combustible(vehiculo_jugador.get_combustible()-1);
+            		mi_ventana.actualizar_combustible(vehiculo_jugador.get_combustible());
+            		
+            		puntaje += vehiculo_jugador.get_combustible() * 30;
+            		mi_ventana.actualizar_puntaje(String.format("%06d", puntaje));
+            	}
+            	else {
+            		timer_puntaje_combustible.stop();	
+            		timer_fin_de_pista.start();	
+            	}
+            		
+            }
+        });
+        timer_puntaje_combustible.start();	
+        
+        timer_fin_de_pista = new Timer(2000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             	mi_ventana.vaciar_ventana();
@@ -215,11 +241,10 @@ public class Juego {
             }
         });
         timer_fin_de_pista.setRepeats(false); 
-        timer_fin_de_pista.start();	
 	}
 	
 	private void perder() {
-		combustible_timer.stop();
+		timer_combustible.stop();
 		mi_ventana.actualizar_vidas(0);
 		mi_ventana.notificar_fin_de_nivel("YOU LOSE");
         Timer timer_perder = new Timer(2000, new ActionListener() {

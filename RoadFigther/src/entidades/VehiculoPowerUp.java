@@ -14,6 +14,7 @@ public class VehiculoPowerUp extends Vehiculo{
 	protected void intersecta(VehiculoJugador vehiculo) {
 		if(!usado) {
 			usado = true;
+			mi_juego.notificar_power_up(pos_x);
 			entidad_grafica.notificarse_cambio_estado();
 			vehiculo.set_combustible(vehiculo.get_combustible() + 5);
 		}
@@ -22,8 +23,8 @@ public class VehiculoPowerUp extends Vehiculo{
 	@Override
 	public String get_imagen_representativa() {
 		int indice = 0;
-		indice = (detonado ? 1 : 0);
-		indice = (usado ? 2 : 0);
+		indice = (detonado ? 1 : indice);
+		indice = (usado ? 2 : indice);
 		return imagenes_representativas[indice];
 	}
 	

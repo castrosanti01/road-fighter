@@ -23,7 +23,7 @@ public class Celda extends JLabel implements EntidadGrafica {
 		super();
 		mi_ventana = v;
 		entidad_logica = e;
-		size_label =  e.get_size_label(); 
+		size_label =  e.get_size_label();
 		setBounds(e.get_pos_x()-30, e.get_pos_y(), size_label, size_label);
 		cambiar_imagen(e.get_imagen_representativa());	 
 	}

@@ -50,7 +50,7 @@ public abstract class Vehiculo implements EntidadLogica {
 	}
 	
 	public Rectangle get_bounds() {
-		return new Rectangle(pos_x+40, pos_y+10, size_label-40, size_label-10);
+		return new Rectangle(pos_x+45, pos_y+10, size_label-45, size_label-10);
 	}
 	
 	public void set_entidad_grafica(EntidadGrafica e) {

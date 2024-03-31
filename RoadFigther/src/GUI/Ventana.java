@@ -24,7 +24,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 
     protected Timer leftTimer, rightTimer, zTimer, xTimer, desacelerar;
     
-    protected JLabel velocimetro, combustible, puntaje, vidas, info_nivel;
+    protected JLabel velocimetro, combustible, puntaje, vidas, info_nivel, info_vehiculo;
 	
     public static final int size_label = 80;
     
@@ -112,6 +112,20 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         	}
         });
 	}
+	
+	public void notificar_power_up(int pos_x) {
+		info_vehiculo.setBounds(pos_x, 342, 85, 33);
+		info_vehiculo.setVisible(true);
+		
+		Timer timer_power_up = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	info_vehiculo.setVisible(false);
+            }
+        });
+        timer_power_up.setRepeats(false); 
+        timer_power_up.start();
+	}
 
     @Override
     public void animar_movimiento(Celda c) {
@@ -161,7 +175,6 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         getContentPane().add(panel_principal);
         
         panel_carretera = new JPanel();
-        panel_carretera.setBackground(Color.DARK_GRAY);
         panel_carretera.setBounds(0, 0, 400, 500);
         panel_principal.add(panel_carretera);
         panel_carretera.setLayout(null);
@@ -175,6 +188,13 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         info_nivel.setBounds(10, 102, 380, 120);
         panel_carretera.add(info_nivel);
         info_nivel.setVisible(false);
+        
+        info_vehiculo = new JLabel("1000");
+        info_vehiculo.setFont(new Font("Consolas", Font.BOLD, 30));
+        info_vehiculo.setForeground(Color.WHITE);
+        info_vehiculo.setBounds(177, 342, 85, 33);
+        panel_carretera.add(info_vehiculo);
+        info_vehiculo.setVisible(false);
         
         velocimetro = new JLabel("0 Km/h");
         velocimetro.setForeground(new Color(255, 255, 255));
@@ -205,54 +225,62 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
             @Override
             public void keyPressed(KeyEvent e) {
                 int key = e.getKeyCode();
-                if(!bloquear_jugabilidad) {
-                	switch (key) {
-                		case KeyEvent.VK_LEFT: leftTimer.start(); break;
-                    
-                		case KeyEvent.VK_RIGHT: rightTimer.start(); break;
-                    
-                		case KeyEvent.VK_Z: 
-                			if(!bloquear_aceleracion) {
-                				zTimer.start(); 
-                				isPressingZ = true;
-                				break;
-                			}
-                    
-                		case KeyEvent.VK_X: 
-                			if(!bloquear_aceleracion) {
-                				xTimer.start(); 
-                				isPressingX = true; 
-                				break;
-                			}
-                	}
+                if (!bloquear_jugabilidad) {
+                    switch (key) {
+                        case KeyEvent.VK_LEFT:
+                            leftTimer.start();
+                            break;
+
+                        case KeyEvent.VK_RIGHT:
+                            rightTimer.start();
+                            break;
+
+                        case KeyEvent.VK_Z:
+                            if (!bloquear_aceleracion && !isPressingX) {
+                                zTimer.start();
+                                isPressingZ = true;
+                            }
+                            break;
+
+                        case KeyEvent.VK_X:
+                            if (!bloquear_aceleracion && !isPressingZ) {
+                                xTimer.start();
+                                isPressingX = true;
+                            }
+                            break;
+                    }
                 }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
                 int key = e.getKeyCode();
-                if(!bloquear_jugabilidad) {
-                	switch (key) {
-                    	case KeyEvent.VK_LEFT: leftTimer.stop(); break;
-                    
-                    	case KeyEvent.VK_RIGHT: rightTimer.stop(); break;
-                    
-	                    case KeyEvent.VK_Z:
-	                    	isPressingZ = false;
-	                    	zTimer.stop();
-	                        desacelerar.start();
-	                        break;
-	                        
-	                    case KeyEvent.VK_X:
-	                    	isPressingX = false;
-	                        xTimer.stop();
-	                        desacelerar.start();
-	                        break;
-                	}
+                if (!bloquear_jugabilidad) {
+                    switch (key) {
+                        case KeyEvent.VK_LEFT:
+                            leftTimer.stop();
+                            break;
+
+                        case KeyEvent.VK_RIGHT:
+                            rightTimer.stop();
+                            break;
+
+                        case KeyEvent.VK_Z:
+                            isPressingZ = false;
+                            zTimer.stop();
+                            desacelerar.start();
+                            break;
+
+                        case KeyEvent.VK_X:
+                            isPressingX = false;
+                            xTimer.stop();
+                            desacelerar.start();
+                            break;
+                    }
                 }
-                
             }
         });
+
         
         // Inicialización de los Timers
         desacelerar = new Timer(50, new ActionListener() {
@@ -307,5 +335,4 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 	    revalidate();
 	    repaint();
 	}
-
 }

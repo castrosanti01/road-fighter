@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import GUI.Carretera;
+import entidades.Camion;
 import entidades.Vehiculo;
 import entidades.VehiculoEnemigo;
 import entidades.VehiculoJugador;
@@ -87,7 +88,7 @@ public class GeneradorNivel {
 		    } 
 		    else if(randomNumber < 70) {
 		        // 20% de probabilidad para dos vehiculo de ruta
-		        carril_izquierdo_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera / 2);
+		        carril_izquierdo_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera / 2 - 20);
 		        carril_derecho_random = carretera.get_limite_izquierdo() + (limite_carretera / 2) + random.nextInt(limite_carretera / 2);
 		        
 		        vehiculo = new VehiculoRuta(carril_izquierdo_random, distanciamiento * contador, "/imagenes/vehiculo_ruta", juego);
@@ -103,23 +104,19 @@ public class GeneradorNivel {
 		    }
 		    else {
 		    	// 10% de probabilidad para un camion
-		        carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
-		        vehiculo = new VehiculoRuta(carril_random, distanciamiento * contador++, "/imagenes/camion", juego);
+		        carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera-50);
+		        vehiculo = new Camion(carril_random, distanciamiento * contador++, "/imagenes/camion", juego);
 		        entidades.add(vehiculo);
 		    }
 		    	
 		}
 		
 		carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
-		vehiculo = new VehiculoPowerUp(carril_random, -340, "/imagenes/vehiculo_power_up", juego);
-		entidades.add(vehiculo);
-
-		carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
 		vehiculo = new VehiculoPowerUp(carril_random, distanciamiento * cantidad_vehiculos / 4, "/imagenes/vehiculo_power_up", juego);
 		entidades.add(vehiculo);
 		
 		carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
-		vehiculo = new VehiculoPowerUp(carril_random, distanciamiento * (cantidad_vehiculos - cantidad_vehiculos / 4), "/imagenes/vehiculo_power_up", juego);
+		vehiculo = new VehiculoPowerUp(carril_random, distanciamiento * (cantidad_vehiculos - cantidad_vehiculos / 4)+100, "/imagenes/vehiculo_power_up", juego);
 		entidades.add(vehiculo);
 		
 		
