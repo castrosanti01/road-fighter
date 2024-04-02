@@ -31,6 +31,7 @@ public class CentralAnimaciones {
     }
     
     public void animar_descarrilar(Celda celda, int angulo) {
+    	ventana.notificarse_animacion_en_progreso();
         Animador animador = new AnimadorDescarrilar(this, celda, 50, angulo);
         agregar_animador_y_lanzar_pendientes(animador);
     }

@@ -48,7 +48,6 @@ public class Carretera extends JLabel {
         g.setColor(LINE_COLOR);
         g.drawRect(14, 25, 1, 425); 
         g.drawRect(45, 25, 1, 425); 
-        
         g.setColor(Color.RED);
         g.fillRect(21, -(roadPositionY/75)+25, 20, 10); 
 
@@ -81,7 +80,7 @@ public class Carretera extends JLabel {
         g.setColor(LINE_COLOR);
         g.drawString("¡Llegada!", (WIDTH - g.getFontMetrics().stringWidth("¡Llegada!")) / 2, roadPositionY + 365);
     }
-
+    
     public void moveRoad(int velocidad) {
         if (roadPositionY <= 0) {
         	roadPositionY += (velocidad / 8); // Ajusta la velocidad de movimiento

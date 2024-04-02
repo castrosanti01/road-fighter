@@ -7,3 +7,6 @@ Largo Carretera: 20000
 
 # Posicion inicial Jugador
 Posicion inicial: 200
+
+# Cantidad Aceites
+Cantidad Aceites: 10

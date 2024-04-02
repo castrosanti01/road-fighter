@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Random;
 
 import GUI.Carretera;
+import entidades.Aceite;
 import entidades.Camion;
 import entidades.Vehiculo;
+import entidades.Obstaculo;
 import entidades.VehiculoEnemigo;
 import entidades.VehiculoJugador;
 import entidades.VehiculoPowerUp;
@@ -30,6 +32,7 @@ public class GeneradorNivel {
 		int ancho_carretera = 0;
 		int largo_carretera = 0;
 		int posicion_inicial = 0;
+		int cantidad_aceites = 0;
 		
 		String linea;
 
@@ -56,6 +59,9 @@ public class GeneradorNivel {
 				    	case "Posicion inicial":
 				    		posicion_inicial = Integer.parseInt(valor);
 				      		break;
+				    	case "Cantidad Aceites":
+				    		cantidad_aceites = Integer.parseInt(valor);
+				      		break;
 				    }
 				}
 			}
@@ -68,6 +74,7 @@ public class GeneradorNivel {
 		Carretera carretera = new Carretera(ancho_carretera, largo_carretera, juego);
 		VehiculoJugador jugador = new VehiculoJugador(posicion_inicial,"/imagenes/vehiculo_jugador", juego);
 		Vehiculo vehiculo;
+		Obstaculo obstaculo;
 		
 		int cantidad_vehiculos = largo_carretera/500 + 10;
 		int contador = 1;
@@ -77,14 +84,15 @@ public class GeneradorNivel {
 		int carril_izquierdo_random;
 		int carril_derecho_random;
 		
-		List<Vehiculo> entidades = new LinkedList<Vehiculo>();
+		List<Vehiculo> vehiculos = new LinkedList<Vehiculo>();
+		List<Obstaculo> obstaculos = new LinkedList<Obstaculo>();
 		while(contador <= cantidad_vehiculos+1) {
 		    int randomNumber = random.nextInt(100);
 		    if(randomNumber < 50) {
 		        // 50% de probabilidad para un vehiculo de ruta
 		        carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
 		        vehiculo = new VehiculoRuta(carril_random, distanciamiento * contador++, "/imagenes/vehiculo_ruta", juego);
-		        entidades.add(vehiculo);
+		        vehiculos.add(vehiculo);
 		    } 
 		    else if(randomNumber < 70) {
 		        // 20% de probabilidad para dos vehiculo de ruta
@@ -92,40 +100,44 @@ public class GeneradorNivel {
 		        carril_derecho_random = carretera.get_limite_izquierdo() + (limite_carretera / 2) + random.nextInt(limite_carretera / 2);
 		        
 		        vehiculo = new VehiculoRuta(carril_izquierdo_random, distanciamiento * contador, "/imagenes/vehiculo_ruta", juego);
-		        entidades.add(vehiculo);
+		        vehiculos.add(vehiculo);
 		        vehiculo = new VehiculoRuta(carril_derecho_random, distanciamiento * contador++, "/imagenes/vehiculo_ruta", juego);
-		        entidades.add(vehiculo);
+		        vehiculos.add(vehiculo);
 		    } 
 		    else if(randomNumber < 90){
 		        // 20% de probabilidad para un vehiculo enemigo
 		        carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
 		        vehiculo = new VehiculoEnemigo(carril_random, distanciamiento * contador++, "/imagenes/vehiculo_enemigo", juego);
-		        entidades.add(vehiculo);
+		        vehiculos.add(vehiculo);
 		    }
 		    else {
 		    	// 10% de probabilidad para un camion
 		        carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera-50);
 		        vehiculo = new Camion(carril_random, distanciamiento * contador++, "/imagenes/camion", juego);
-		        entidades.add(vehiculo);
+		        vehiculos.add(vehiculo);
 		    }
-		    	
+		}
+		
+		for(int i = 1; i <= cantidad_aceites; i++) {
+			carril_random = carretera.get_limite_izquierdo() + 30 + random.nextInt(limite_carretera-50);
+	    	obstaculo = new Aceite(carril_random, -(largo_carretera/cantidad_aceites) * i, "/imagenes/aceite", juego);
+	    	obstaculos.add(obstaculo);
 		}
 		
 		carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
 		vehiculo = new VehiculoPowerUp(carril_random, distanciamiento * cantidad_vehiculos / 4, "/imagenes/vehiculo_power_up", juego);
-		entidades.add(vehiculo);
+		vehiculos.add(vehiculo);
 		
 		carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
 		vehiculo = new VehiculoPowerUp(carril_random, distanciamiento * (cantidad_vehiculos - cantidad_vehiculos / 4)+100, "/imagenes/vehiculo_power_up", juego);
-		entidades.add(vehiculo);
-		
-		
+		vehiculos.add(vehiculo);
 		
 		return new Nivel.Builder()
 				.nivelActual(nivel)
 				.carretera(carretera)
 				.vehiculoJugador(jugador)
-				.entidades(entidades)
+				.vehiculos(vehiculos)
+				.obstaculos(obstaculos)
 		        .build();
 	}
 }

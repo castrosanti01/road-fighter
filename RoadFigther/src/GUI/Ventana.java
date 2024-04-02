@@ -59,6 +59,8 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 	public void notificarse_animacion_finalizada() {
 		synchronized(this){
 			bloquear_jugabilidad = false;
+			isPressingZ = false;
+			isPressingX = false;
 		}
 	}
 	
@@ -78,7 +80,9 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 	@Override
 	public void notificar_descarrilado_finalizado() {
 		synchronized(this){
+			mi_juego.set_descarrilado_en_proceso(false);
 			bloquear_aceleracion = false;
+			bloquear_jugabilidad = false;
 		}
 	}
 	
@@ -236,14 +240,14 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
                             break;
 
                         case KeyEvent.VK_Z:
-                            if (!bloquear_aceleracion && !isPressingX) {
+                            if (!bloquear_aceleracion) {
                                 zTimer.start();
                                 isPressingZ = true;
                             }
                             break;
 
                         case KeyEvent.VK_X:
-                            if (!bloquear_aceleracion && !isPressingZ) {
+                            if (!bloquear_aceleracion) {
                                 xTimer.start();
                                 isPressingX = true;
                             }
@@ -318,7 +322,11 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 
         zTimer = new Timer(50, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	mi_juego.mover_jugador(Juego.ZETA);
+            	if(!isPressingX) {
+            		VehiculoJugador aux = (VehiculoJugador) mi_juego.get_vehiculo_jugador();
+                	if(aux.get_velocidad() <= 198)
+                		mi_juego.mover_jugador(Juego.ZETA);
+            	}
             }
         });
 

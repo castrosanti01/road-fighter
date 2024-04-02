@@ -36,12 +36,18 @@ public class VehiculoJugador extends Vehiculo{
 		combustible = comb;
 	}
 	
+	public void set_descarrilado_en_proceso(boolean b) {
+		descarrilado_en_proceso = b;
+		descarilado_izquierdo = false;
+		descarilado_derecho = false;
+	}
+	
 	public void carrilar_izquierdo() {
 		if(descarrilado_en_proceso && descarilado_izquierdo) {
 			descarrilado_en_proceso = false;
 			descarilado_izquierdo = false;
 			entidad_grafica.rotar(45);
-			
+
 			timer_descarrilar.stop();
         	mi_juego.notificar_descarrilado_finalizado();
 		}
@@ -74,35 +80,37 @@ public class VehiculoJugador extends Vehiculo{
 	}
 	
 	public void verificar_colision() {
-		List<Vehiculo> vehiculos = mi_juego.get_entidades();
-	    for(Vehiculo vehiculo : vehiculos) {
-	        if(get_bounds().intersects(vehiculo.get_bounds()) && !descarrilado_en_proceso && !vehiculo.get_detonado()) 
-	        	vehiculo.intersecta(this);	           
+		List<Entidad> entidades = mi_juego.get_entidades();
+	    for(Entidad e : entidades) {
+	        if(get_bounds().intersects(e.get_bounds())) 
+	        	e.intersecta(this);	           
 	    }
 	}
 	
 	public void descarrilar(int angulo) {
-		mi_juego.notificar_descarrilado_en_proceso();
-		descarrilado_en_proceso = true;
-		
-		entidad_grafica.rotar(angulo);
-		if(angulo < 0)
-			descarilado_izquierdo = true;
-		else
-			descarilado_derecho = true;
-		
-		//Si no se acomoda el vehiculo antes de 1 segundo:
-		timer_descarrilar = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	if(descarilado_izquierdo | descarilado_derecho) 
-            		entidad_grafica.notificarse_descarrilar(angulo);	//Descarrilado completo
-            	
-            	descarrilado_en_proceso = false;
-            }
-        });
-        timer_descarrilar.setRepeats(false); 
-        timer_descarrilar.start();
+		if(!descarrilado_en_proceso) {
+			mi_juego.notificar_descarrilado_en_proceso();
+			descarrilado_en_proceso = true;
+			
+			entidad_grafica.rotar(angulo);
+			if(angulo < 0)
+				descarilado_izquierdo = true;
+			else
+				descarilado_derecho = true;
+			
+			//Si no se acomoda el vehiculo antes de 1 segundo:
+			timer_descarrilar = new Timer(1000, new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	            	if(descarilado_izquierdo | descarilado_derecho) 
+	            		entidad_grafica.notificarse_descarrilar(angulo);	//Descarrilado completo
+	            	
+	            	//descarrilado_en_proceso = false;
+	            }
+	        });
+	        timer_descarrilar.setRepeats(false); 
+	        timer_descarrilar.start();
+		}
 	}
 	
 	public void detonar() {
@@ -131,7 +139,7 @@ public class VehiculoJugador extends Vehiculo{
         		break;
         	case 2: 
         		if(velocidad <= 195)
-        			velocidad += 3; 		//3 para que si empezas con el 2do cambio vas mas lento
+        			velocidad += 3; 		//+3 para que si empezas con el 2do cambio vas mas lento
         		else if(velocidad < 300)
         			velocidad += 6;
         		else if(velocidad >= 300)

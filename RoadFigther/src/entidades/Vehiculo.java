@@ -1,60 +1,21 @@
 package entidades;
 
-import java.awt.Rectangle;
 import java.util.List;
-
-import GUI.EntidadGrafica;
-import GUI.Ventana;
-import logica.EntidadLogica;
 import logica.Juego;
 
-public abstract class Vehiculo implements EntidadLogica {
-	
-	protected int pos_x;
-	protected int pos_y;
-	protected Juego mi_juego;
-	
+public abstract class Vehiculo extends Entidad {
+
 	protected int limite_izquierdo, limite_derecho;
-	
-	protected int size_label = Ventana.size_label;
-	
 	protected boolean detonado;
 	
-	protected String [] imagenes_representativas;
-	protected EntidadGrafica entidad_grafica;
-	
 	protected Vehiculo(int x, int y, String path_img, Juego j) {
-		pos_x = x;
-		pos_y = y;
-		mi_juego = j;
+		super(x, y, path_img, j);
 		cargar_imagenes_representativas(path_img);
 	}
 	
-	@Override
-	public int get_pos_x() {
-		return pos_x;
-	}
-	
-	@Override
-	public int get_pos_y() {
-		return pos_y;
-	}
-	
-	@Override
-	public int get_size_label() {
-		return size_label;
-	}
 	
 	public boolean get_detonado() {
 		return detonado;
-	}
-	
-	public Rectangle get_bounds() {
-		return new Rectangle(pos_x+45, pos_y+10, size_label-45, size_label-10);
-	}
-	
-	public void set_entidad_grafica(EntidadGrafica e) {
-		entidad_grafica = e;
 	}
 	
 	public void actualizar_limite_izquierdo(int limite) {
@@ -66,9 +27,7 @@ public abstract class Vehiculo implements EntidadLogica {
 	}
 	
 	public void cambiar_posicion(int nueva_x, int nueva_y) {
-		pos_x = nueva_x;
-		pos_y = nueva_y;
-		entidad_grafica.notificarse_cambio_posicion();
+		super.cambiar_posicion(nueva_x, nueva_y);
 		if(pos_y > 500)
 			mi_juego.actualizar_puntaje();
 	}
@@ -84,7 +43,7 @@ public abstract class Vehiculo implements EntidadLogica {
 	
 	public void verificar_colision() {
 		//Si se chochan entre si
-		List<Vehiculo> vehiculos = mi_juego.get_entidades();
+		List<Vehiculo> vehiculos = mi_juego.get_vehiculos();
 		for(Vehiculo vehiculo: vehiculos) {
 			if(vehiculo.get_pos_y() > 0 && !detonado && vehiculo != this)
 				if(get_bounds().intersects(vehiculo.get_bounds())) {
@@ -96,17 +55,29 @@ public abstract class Vehiculo implements EntidadLogica {
 	
 	protected void intersecta(VehiculoJugador vehiculo) {
 		//Diferencia para saber si moverse a la derecha o a la izquierda
-    	double diferencia = (vehiculo.get_pos_x() + size_label/2) - (get_pos_x() + size_label/2);
-        if(diferencia > 0) {
-        	vehiculo.descarrilar(-45);
-        	vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() + 35, vehiculo.get_pos_y());
-            cambiar_posicion_animado(get_pos_x() - 35, get_pos_y());
-        }
-        else { 
-        	vehiculo.descarrilar(45);
-        	vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() - 35, vehiculo.get_pos_y());
-        	cambiar_posicion_animado(get_pos_x() + 35, get_pos_y());
-        }
+		double diferencia = (vehiculo.get_pos_x() + size_label/2) - (get_pos_x() + size_label/2);
+		if(!detonado && !vehiculo.descarrilado_en_proceso) {
+	        if(diferencia > 0) {
+	        	vehiculo.descarrilar(-45);
+	        	vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() + 40, vehiculo.get_pos_y());
+	            cambiar_posicion_animado(get_pos_x() - 40, get_pos_y());
+	        }
+	        else { 
+	        	vehiculo.descarrilar(45);
+	        	vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() - 40, vehiculo.get_pos_y());
+	        	cambiar_posicion_animado(get_pos_x() + 40, get_pos_y());
+	        }
+		}
+		else {
+			if(diferencia > 0) {
+	        	vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() + 40, vehiculo.get_pos_y());
+	            cambiar_posicion_animado(get_pos_x() - 40, get_pos_y());
+	        }
+	        else { 
+	        	vehiculo.cambiar_posicion_animado(vehiculo.get_pos_x() - 35, vehiculo.get_pos_y());
+	        	cambiar_posicion_animado(get_pos_x() + 35, get_pos_y());
+	        }
+		}
 	}
 
 	public void detonar() {
