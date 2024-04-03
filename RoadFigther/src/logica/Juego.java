@@ -211,7 +211,7 @@ public class Juego {
 		mi_ventana.actualizar_puntaje(String.format("%06d", puntaje));
 	}
 
-	public void notificar_detonado() {
+	public void notificar_detonado(VehiculoJugador vj) {
 		if(vidas == 1) {
 			--vidas;
 			perder();
@@ -224,6 +224,10 @@ public class Juego {
 			mi_ventana.actualizar_velocidad(vehiculo_jugador.get_velocidad());
 			mi_ventana.actualizar_vidas(--vidas);
 		}
+	}
+	
+	public void notificar_detonado(Vehiculo vj) {
+		mi_ventana.notificar_detonado();
 	}
 	
 	public void notificar_descarrilado_en_proceso() {

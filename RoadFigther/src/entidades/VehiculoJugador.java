@@ -122,7 +122,7 @@ public class VehiculoJugador extends Vehiculo{
 			mi_juego.notificar_descarrilado_finalizado();
 			descarrilado_en_proceso = false;
 		}
-		mi_juego.notificar_detonado();
+		mi_juego.notificar_detonado(this);
 	}
 	
 	public void reivir() {

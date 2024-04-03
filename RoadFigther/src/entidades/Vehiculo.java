@@ -83,6 +83,7 @@ public abstract class Vehiculo extends Entidad {
 	public void detonar() {
 		detonado = true;
 		entidad_grafica.notificarse_cambio_estado();
+		mi_juego.notificar_detonado(this);
 	}
 	
 	@Override

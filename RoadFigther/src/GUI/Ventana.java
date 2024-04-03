@@ -8,6 +8,8 @@ import animadores.CentralAnimaciones;
 import entidades.VehiculoJugador;
 import logica.EntidadLogica;
 import logica.Juego;
+import sonido.ManejadorSonido;
+
 import java.awt.Font;
 
 @SuppressWarnings("serial")
@@ -16,6 +18,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     protected Juego mi_juego;
     protected Carretera mi_carretera; 
     protected CentralAnimaciones mi_animador;
+    protected ManejadorSonido mi_manejador_sonido;
     
     protected JLayeredPane panel_principal;
     protected JPanel panel_carretera;
@@ -32,6 +35,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     public Ventana(Juego j) {
         mi_juego = j;
         mi_animador = new CentralAnimaciones(this);
+        mi_manejador_sonido = new ManejadorSonido();
         
         panel_principal = new JLayeredPane();
         bloquear_jugabilidad = false;
@@ -88,6 +92,11 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 	
 	public void notificar_fin_de_nivel(String info) {
 		notificarse_animacion_en_progreso();
+		if(info == "CHECKPOINT")
+			mi_manejador_sonido.reproducir_stage_clear();
+		else
+			mi_manejador_sonido.reproducir_lose();
+		
 		info_nivel.setText("<html>"+info+"<br>HI: "+mi_juego.get_puntaje()+"</html>");
 		info_nivel.setVisible(true);
 	}
@@ -118,6 +127,7 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 	}
 	
 	public void notificar_power_up(int pos_x) {
+		mi_manejador_sonido.reproducir_power_up();
 		info_vehiculo.setBounds(pos_x, 342, 85, 33);
 		info_vehiculo.setVisible(true);
 		
@@ -129,6 +139,10 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         });
         timer_power_up.setRepeats(false); 
         timer_power_up.start();
+	}
+	
+	public void notificar_detonado() {
+		mi_manejador_sonido.reproducir_explosion();
 	}
 
     @Override
@@ -157,10 +171,13 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
     
     public void actualizar_velocidad(int vel) {
     	velocimetro.setText(vel + " Km/h");
+    	mi_manejador_sonido.actualizar_velocidad(vel);
 	}
     
     public void actualizar_vidas(int cant) {
     	vidas.setText("VIDAS: " + cant);
+    	//mi_manejador_sonido.reproducir_explosion();
+    	mi_manejador_sonido.pausar_sonido();
 	}
     
     public void actualizar_combustible(int cant) {
@@ -343,4 +360,5 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
 	    revalidate();
 	    repaint();
 	}
+
 }
