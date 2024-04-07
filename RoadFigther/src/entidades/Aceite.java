@@ -1,7 +1,5 @@
 package entidades;
 
-import java.awt.Rectangle;
-
 import logica.Juego;
 
 public class Aceite extends Obstaculo{
@@ -13,10 +11,6 @@ public class Aceite extends Obstaculo{
 		aceite_activado = false;
 	}
 	
-	public Rectangle get_bounds() {
-		return new Rectangle(pos_x+10, pos_y+10, size_label-10, size_label-10);
-	}
-
 	protected void intersecta(VehiculoJugador vehiculoJugador) {
 		if(!aceite_activado) {
 			aceite_activado = true;

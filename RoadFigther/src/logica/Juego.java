@@ -255,7 +255,7 @@ public class Juego {
             		vehiculo_jugador.set_combustible(vehiculo_jugador.get_combustible()-1);
             		mi_ventana.actualizar_combustible(vehiculo_jugador.get_combustible());
             		
-            		puntaje += vehiculo_jugador.get_combustible() * 30;
+            		puntaje += 30;
             		mi_ventana.actualizar_puntaje(String.format("%06d", puntaje));
             	}
             	else {

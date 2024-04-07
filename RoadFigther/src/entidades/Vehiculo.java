@@ -1,5 +1,6 @@
 package entidades;
 
+import java.awt.Rectangle;
 import java.util.List;
 import logica.Juego;
 
@@ -7,12 +8,13 @@ public abstract class Vehiculo extends Entidad {
 
 	protected int limite_izquierdo, limite_derecho;
 	protected boolean detonado;
+	protected boolean puntaje_reclamado;
 	
 	protected Vehiculo(int x, int y, String path_img, Juego j) {
 		super(x, y, path_img, j);
+		puntaje_reclamado = false;
 		cargar_imagenes_representativas(path_img);
 	}
-	
 	
 	public boolean get_detonado() {
 		return detonado;
@@ -26,10 +28,16 @@ public abstract class Vehiculo extends Entidad {
 		limite_derecho = limite;
 	}
 	
+	public Rectangle get_bounds() {
+		return new Rectangle(pos_x+45, pos_y+10, size_label-45, size_label-10);
+	}
+	
 	public void cambiar_posicion(int nueva_x, int nueva_y) {
 		super.cambiar_posicion(nueva_x, nueva_y);
-		if(pos_y > 500)
+		if(pos_y > 500 && !puntaje_reclamado) {
+			puntaje_reclamado = true;
 			mi_juego.actualizar_puntaje();
+		}
 	}
 	
 	public void cambiar_posicion_animado(int nueva_x, int nueva_y) {

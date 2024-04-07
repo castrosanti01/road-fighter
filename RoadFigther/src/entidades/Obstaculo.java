@@ -1,5 +1,7 @@
 package entidades;
 
+import java.awt.Rectangle;
+
 import logica.Juego;
 
 public abstract class Obstaculo extends Entidad {
@@ -8,6 +10,10 @@ public abstract class Obstaculo extends Entidad {
 		super(x, y, path_img, j);
 		size_label = 50;
 		cargar_imagenes_representativas(path_img);
+	}
+	
+	public Rectangle get_bounds() {
+		return new Rectangle(pos_x+30, pos_y, size_label-10, size_label-10);
 	}
 	
 	@Override

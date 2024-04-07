@@ -40,10 +40,6 @@ public abstract class Entidad implements EntidadLogica {
 		return size_label;
 	}
 	
-	public Rectangle get_bounds() {
-		return new Rectangle(pos_x+45, pos_y+10, size_label-45, size_label-10);
-	}
-	
 	public void set_entidad_grafica(EntidadGrafica e) {
 		entidad_grafica = e;
 	}
@@ -54,18 +50,13 @@ public abstract class Entidad implements EntidadLogica {
 		entidad_grafica.notificarse_cambio_posicion();
 	}
 	
+	public abstract Rectangle get_bounds();
+	
 	protected abstract void intersecta(VehiculoJugador vehiculoJugador);
 	
 	@Override
-	public String get_imagen_representativa() {
-		int indice = 0;
-		return imagenes_representativas[indice];
-	}
+	public abstract String get_imagen_representativa();
 	
-	protected void cargar_imagenes_representativas(String path_img) {
-		imagenes_representativas = new String [2];
-		imagenes_representativas[0] = path_img + ".png";
-		imagenes_representativas[1] = "/imagenes/vehiculo_detonado.png";
-	}
+	protected abstract void cargar_imagenes_representativas(String path_img);
 
 }

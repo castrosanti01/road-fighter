@@ -10,6 +10,7 @@ import java.util.Random;
 
 import GUI.Carretera;
 import entidades.Aceite;
+import entidades.Bache;
 import entidades.Camion;
 import entidades.Vehiculo;
 import entidades.Obstaculo;
@@ -86,6 +87,8 @@ public class GeneradorNivel {
 		
 		List<Vehiculo> vehiculos = new LinkedList<Vehiculo>();
 		List<Obstaculo> obstaculos = new LinkedList<Obstaculo>();
+		
+		//Generador de vehiculos
 		while(contador <= cantidad_vehiculos+1) {
 		    int randomNumber = random.nextInt(100);
 		    if(randomNumber < 50) {
@@ -118,12 +121,19 @@ public class GeneradorNivel {
 		    }
 		}
 		
+		//Generador de obstaculos
 		for(int i = 1; i <= cantidad_aceites; i++) {
 			carril_random = carretera.get_limite_izquierdo() + 30 + random.nextInt(limite_carretera-50);
 	    	obstaculo = new Aceite(carril_random, -(largo_carretera/cantidad_aceites) * i, "/imagenes/aceite", juego);
 	    	obstaculos.add(obstaculo);
 		}
 		
+		carril_random = carretera.get_limite_izquierdo() + 30 + random.nextInt(limite_carretera-50);
+    	obstaculo = new Bache(carril_random, distanciamiento * cantidad_vehiculos, "/imagenes/bache", juego);
+    	obstaculos.add(obstaculo);
+    	
+		
+		//Generador de powerUp
 		carril_random = carretera.get_limite_izquierdo() + random.nextInt(limite_carretera);
 		vehiculo = new VehiculoPowerUp(carril_random, distanciamiento * cantidad_vehiculos / 4, "/imagenes/vehiculo_power_up", juego);
 		vehiculos.add(vehiculo);
