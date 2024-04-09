@@ -120,8 +120,9 @@ public class Ventana extends JFrame implements VentanaAnimable, VentanaNotificab
         
         boton_reintentar.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		dispose();
-        		new Juego();
+        		vaciar_ventana();
+        		notificarse_animacion_finalizada();
+        		mi_juego.volver_a_jugar();
         	}
         });
 	}

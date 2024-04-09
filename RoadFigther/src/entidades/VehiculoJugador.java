@@ -104,8 +104,6 @@ public class VehiculoJugador extends Vehiculo{
 	            public void actionPerformed(ActionEvent e) {
 	            	if(descarilado_izquierdo | descarilado_derecho) 
 	            		entidad_grafica.notificarse_descarrilar(angulo);	//Descarrilado completo
-	            	
-	            	//descarrilado_en_proceso = false;
 	            }
 	        });
 	        timer_descarrilar.setRepeats(false); 

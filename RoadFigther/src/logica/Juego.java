@@ -244,6 +244,7 @@ public class Juego {
 	}
 
 	public void notificar_fin_de_pista() {
+		notificar_descarrilado_finalizado();
 		vehiculo_jugador.set_velocidad(0);
         timer_combustible.stop();
         mi_ventana.notificar_fin_de_nivel("CHECKPOINT");
@@ -259,8 +260,8 @@ public class Juego {
             		mi_ventana.actualizar_puntaje(String.format("%06d", puntaje));
             	}
             	else {
-            		timer_puntaje_combustible.stop();	
             		timer_fin_de_pista.start();	
+            		timer_puntaje_combustible.stop();
             	}
             		
             }
@@ -295,6 +296,13 @@ public class Juego {
         });
         timer_perder.setRepeats(false); 
         timer_perder.start();
+	}
+	
+	public void volver_a_jugar() {
+		vidas = 3;
+		nivel = 1;
+		puntaje = 0;
+		cargar_nivel(nivel);
 	}
 
 	public static void main(String[] args) {
